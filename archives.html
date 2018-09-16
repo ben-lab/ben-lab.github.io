@@ -11,7 +11,7 @@
 
   <title>
     
-      About - ben's lab
+      Archives - ben's lab
     
   </title>
 
@@ -48,16 +48,16 @@
   <script src="/assets/res/jquery-3.1.0.min.js"></script>
   <!-- Begin Jekyll SEO tag v2.5.0 -->
 <meta name="generator" content="Jekyll v3.8.3" />
-<meta property="og:title" content="About" />
+<meta property="og:title" content="Archives" />
 <meta name="author" content="Ben" />
 <meta property="og:locale" content="en_EN" />
 <meta name="description" content="Ce blog est dédié à la sécurité informatique. Tutos sur le fonctionnement de la pile, les buffers overflow, on explique tout avec des exemples concrets." />
 <meta property="og:description" content="Ce blog est dédié à la sécurité informatique. Tutos sur le fonctionnement de la pile, les buffers overflow, on explique tout avec des exemples concrets." />
-<link rel="canonical" href="http://0.0.0.0:4000/about/" />
-<meta property="og:url" content="http://0.0.0.0:4000/about/" />
+<link rel="canonical" href="http://0.0.0.0:4000/archives.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/archives.html" />
 <meta property="og:site_name" content="ben’s lab" />
 <script type="application/ld+json">
-{"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://0.0.0.0:4000/assets/icones/logo.png"},"name":"Ben"},"headline":"About","@type":"WebSite","url":"http://0.0.0.0:4000/about/","name":"ben’s lab","author":{"@type":"Person","name":"Ben"},"description":"Ce blog est dédié à la sécurité informatique. Tutos sur le fonctionnement de la pile, les buffers overflow, on explique tout avec des exemples concrets.","@context":"http://schema.org"}</script>
+{"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://0.0.0.0:4000/assets/icones/logo.png"},"name":"Ben"},"headline":"Archives","@type":"WebPage","url":"http://0.0.0.0:4000/archives.html","author":{"@type":"Person","name":"Ben"},"description":"Ce blog est dédié à la sécurité informatique. Tutos sur le fonctionnement de la pile, les buffers overflow, on explique tout avec des exemples concrets.","@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -85,13 +85,13 @@
           
             
               
-                <a class="sidebar-nav-item active" href="/about/">About</a>
+                <a class="sidebar-nav-item" href="/about/">About</a>
               
             
           
             
               
-                <a class="sidebar-nav-item" href="/archives.html">Archives</a>
+                <a class="sidebar-nav-item active" href="/archives.html">Archives</a>
               
             
           
@@ -128,26 +128,54 @@
 
     <div class="content container">
       <div class="page">
-  <h1 class="page-title">About</h1>
-  <h2 id="who-am-i">Who am I</h2>
+  <h1 class="page-title">Archives</h1>
+  <form name="category_form">
+  <div class="radio-group">
+  <input type="radio" id="option-one" name="selector" checked="" /><label for="option-one">Date</label><input type="radio" id="option-two" name="selector" /><label for="option-two">Categories</label>
+  </div>
+ </form>
 
-<p>An Offsec guy getting into Appsec and DevSecOps.<br />
-I created this blog to share my experiments on both those topics.</p>
+<div id="ordered_by_categories" style="display: none;">
 
-<h2 id="credits">Credits</h2>
+  <h2 id="user-land">User-Land</h2>
 
-<p><strong>Jekyll template :</strong></p>
-<ul>
-  <li>Hydeout as modified by Pixis (hackndo)</li>
-  <li><a href="https://beta.hackndo.com">https://beta.hackndo.com</a></li>
-  <li><a href="https://github.com/Hackndo/hackndo.github.io">https://github.com/Hackndo/hackndo.github.io</a></li>
-</ul>
+  <h2 id="kernel-land">Kernel-Land</h2>
 
-<p><strong>Flask icon :</strong></p>
-<ul>
-  <li>Icon made by Maxim Basinski from www.flaticon.com</li>
-  <li><a href="https://www.flaticon.com/free-icon/flask_297550">https://www.flaticon.com/free-icon/flask_297550</a></li>
-</ul>
+  <h2 id="hardware">Hardware</h2>
+
+  <h2 id="crypto">Crypto</h2>
+
+  <h2 id="tutorials">Tutorials</h2>
+
+  <h2 id="web">Web</h2>
+
+  <h2 id="ctf">CTF</h2>
+
+  <h2 id="others">Others</h2>
+
+  <p>16 Sep 2018 » <a href="/golang-reverse-proxy-1-4/"> Protecting a shared Docker socket using a Golang reverse-proxy (1/4) </a></p>
+
+</div>
+<div id="ordered_by_date">
+
+  <h2 id="all-posts">All posts</h2>
+
+  <p>16 Sep 2018 » <a href="/golang-reverse-proxy-1-4/"> Protecting a shared Docker socket using a Golang reverse-proxy (1/4) </a></p>
+
+</div>
+
+<script>
+    var rad = document.category_form.selector;
+    rad[0].onclick = function() {
+      document.getElementById("ordered_by_categories").style.display = "none";
+      document.getElementById("ordered_by_date").style.display = "block";
+    };
+    rad[1].onclick = function() {
+      document.getElementById("ordered_by_date").style.display = "none";
+      document.getElementById("ordered_by_categories").style.display = "block";
+    };
+</script>
+
 
 </div>
     </div>

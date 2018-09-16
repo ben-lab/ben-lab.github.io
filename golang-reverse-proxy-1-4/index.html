@@ -11,7 +11,7 @@
 
   <title>
     
-      About - ben's lab
+      Protecting a shared Docker socket using a Golang reverse-proxy (1/4) - ben's lab
     
   </title>
 
@@ -48,16 +48,19 @@
   <script src="/assets/res/jquery-3.1.0.min.js"></script>
   <!-- Begin Jekyll SEO tag v2.5.0 -->
 <meta name="generator" content="Jekyll v3.8.3" />
-<meta property="og:title" content="About" />
+<meta property="og:title" content="Protecting a shared Docker socket using a Golang reverse-proxy (1/4)" />
 <meta name="author" content="Ben" />
 <meta property="og:locale" content="en_EN" />
-<meta name="description" content="Ce blog est dédié à la sécurité informatique. Tutos sur le fonctionnement de la pile, les buffers overflow, on explique tout avec des exemples concrets." />
-<meta property="og:description" content="Ce blog est dédié à la sécurité informatique. Tutos sur le fonctionnement de la pile, les buffers overflow, on explique tout avec des exemples concrets." />
-<link rel="canonical" href="http://0.0.0.0:4000/about/" />
-<meta property="og:url" content="http://0.0.0.0:4000/about/" />
+<meta name="description" content="Protecting a shared Docker socket using a Golang reverse-proxy" />
+<meta property="og:description" content="Protecting a shared Docker socket using a Golang reverse-proxy" />
+<link rel="canonical" href="http://0.0.0.0:4000/golang-reverse-proxy-1-4/" />
+<meta property="og:url" content="http://0.0.0.0:4000/golang-reverse-proxy-1-4/" />
 <meta property="og:site_name" content="ben’s lab" />
+<meta property="og:image" content="http://0.0.0.0:4000/assets/uploads/2018/09/golang_and_docker.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-09-16T14:38:43-05:00" />
 <script type="application/ld+json">
-{"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://0.0.0.0:4000/assets/icones/logo.png"},"name":"Ben"},"headline":"About","@type":"WebSite","url":"http://0.0.0.0:4000/about/","name":"ben’s lab","author":{"@type":"Person","name":"Ben"},"description":"Ce blog est dédié à la sécurité informatique. Tutos sur le fonctionnement de la pile, les buffers overflow, on explique tout avec des exemples concrets.","@context":"http://schema.org"}</script>
+{"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://0.0.0.0:4000/assets/icones/logo.png"},"name":"Ben"},"headline":"Protecting a shared Docker socket using a Golang reverse-proxy (1/4)","dateModified":"2018-09-16T14:38:43-05:00","datePublished":"2018-09-16T14:38:43-05:00","@type":"BlogPosting","image":"http://0.0.0.0:4000/assets/uploads/2018/09/golang_and_docker.png","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/golang-reverse-proxy-1-4/"},"url":"http://0.0.0.0:4000/golang-reverse-proxy-1-4/","author":{"@type":"Person","name":"Ben"},"description":"Protecting a shared Docker socket using a Golang reverse-proxy","@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -85,7 +88,7 @@
           
             
               
-                <a class="sidebar-nav-item active" href="/about/">About</a>
+                <a class="sidebar-nav-item" href="/about/">About</a>
               
             
           
@@ -127,29 +130,40 @@
 
 
     <div class="content container">
-      <div class="page">
-  <h1 class="page-title">About</h1>
-  <h2 id="who-am-i">Who am I</h2>
+      <div class="post">
+  
+  <div class="post-cover">
+    <img src="/assets/uploads/2018/09/golang_and_docker.png" alt="Protecting a shared Docker socket using a Golang reverse-proxy (1/4)" title="Protecting a shared Docker socket using a Golang reverse-proxy (1/4)" />
+  </div>
+  
+  <h1 class="post-title">Protecting a shared Docker socket using a Golang reverse-proxy (1/4)</h1>
+  <div class="post-info">
+      <p class="alignleft">16 Sep 2018 <a class="post-comments-count" href="http://http://0.0.0.0:4000/golang-reverse-proxy-1-4/#disqus_thread"></a></p>
+      <p class="alignright">Auteur : <strong>Ben</strong></p>
+  </div>
 
-<p>An Offsec guy getting into Appsec and DevSecOps.<br />
-I created this blog to share my experiments on both those topics.</p>
+  <article>
+  <p><strong>Work in progress</strong></p>
 
-<h2 id="credits">Credits</h2>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus quis mi mattis, vehicula odio at, pellentesque sapien. Phasellus accumsan egestas ligula, sit amet viverra ante interdum in. Fusce posuere vehicula erat vitae cursus. Aenean risus turpis, porttitor vitae risus eget, pellentesque facilisis nisl. Morbi vitae enim non leo ullamcorper mattis. Maecenas ex magna, lacinia porttitor mauris pellentesque, rhoncus varius tortor. Donec nulla elit, eleifend aliquet facilisis eu, suscipit sed magna.</p>
 
-<p><strong>Jekyll template :</strong></p>
-<ul>
-  <li>Hydeout as modified by Pixis (hackndo)</li>
-  <li><a href="https://beta.hackndo.com">https://beta.hackndo.com</a></li>
-  <li><a href="https://github.com/Hackndo/hackndo.github.io">https://github.com/Hackndo/hackndo.github.io</a></li>
-</ul>
+<p>Sed ut elit sollicitudin, tristique tortor quis, condimentum velit. Mauris ut tellus feugiat, sodales neque ac, volutpat neque. Curabitur imperdiet neque tellus, ut ullamcorper lectus dapibus sit amet. Ut molestie, quam vitae eleifend sollicitudin, tellus magna posuere arcu, vel lobortis nulla tellus sed justo. Etiam dolor magna, sollicitudin nec blandit a, volutpat quis risus. Pellentesque hendrerit pharetra convallis. Curabitur consectetur a quam sollicitudin viverra. Quisque pulvinar leo lorem, eget mollis ipsum sollicitudin ut. Nam ut efficitur lectus. Donec nec est tortor. Aenean efficitur massa at ipsum posuere congue. Cras mi massa, molestie in tincidunt et, congue in justo. Fusce libero nibh, egestas vel erat quis, pretium pharetra dui.</p>
 
-<p><strong>Flask icon :</strong></p>
-<ul>
-  <li>Icon made by Maxim Basinski from www.flaticon.com</li>
-  <li><a href="https://www.flaticon.com/free-icon/flask_297550">https://www.flaticon.com/free-icon/flask_297550</a></li>
-</ul>
+<p>Aliquam erat volutpat. Aliquam erat volutpat. Proin pellentesque nulla vitae augue ullamcorper mollis. Nulla eu elit in tellus viverra fermentum. Sed erat lacus, dapibus et euismod in, interdum vitae magna. Quisque ligula dolor, dignissim vel odio vel, dictum tempus urna. Phasellus volutpat nec ipsum id accumsan.</p>
 
+  </article>
 </div>
+
+<div class="related">
+  <h2>Articles similaires</h2>
+  <ul class="related-posts">
+    
+  </ul>
+</div>
+
+<div id="disqus_thread"></div>
+
+
     </div>
   <script src="/assets/res/anchor.min.js"></script>
   <script src="/assets/res/script.js"></script>
