@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
-<loc>http://0.0.0.0:4000/golang-reverse-proxy-1-4/</loc>
+<loc>/golang-reverse-proxy-1-4/</loc>
 <lastmod>2018-09-16T14:38:43-05:00</lastmod>
 </url>
 <url>
-<loc>http://0.0.0.0:4000/about/</loc>
+<loc>/about/</loc>
 </url>
 <url>
-<loc>http://0.0.0.0:4000/archives.html</loc>
+<loc>/archives.html</loc>
 </url>
 <url>
-<loc>http://0.0.0.0:4000/</loc>
+<loc>/</loc>
 </url>
 </urlset>
