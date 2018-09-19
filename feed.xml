@@ -5,25 +5,96 @@
     <description>Appsec and DevSecOps</description>
     <link>//</link>
     <atom:link href="//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 16 Sep 2018 17:23:51 -0500</pubDate>
-    <lastBuildDate>Sun, 16 Sep 2018 17:23:51 -0500</lastBuildDate>
+    <pubDate>Wed, 19 Sep 2018 07:03:10 -0500</pubDate>
+    <lastBuildDate>Wed, 19 Sep 2018 07:03:10 -0500</lastBuildDate>
     <generator>Jekyll v3.8.3</generator>
     
       <item>
         <title>Protecting a shared Docker socket using a Golang reverse-proxy (1/4)</title>
-        <description>&lt;p&gt;&lt;strong&gt;Work in progress&lt;/strong&gt;&lt;/p&gt;
+        <description>&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
 
-&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus quis mi mattis, vehicula odio at, pellentesque sapien. Phasellus accumsan egestas ligula, sit amet viverra ante interdum in. Fusce posuere vehicula erat vitae cursus. Aenean risus turpis, porttitor vitae risus eget, pellentesque facilisis nisl. Morbi vitae enim non leo ullamcorper mattis. Maecenas ex magna, lacinia porttitor mauris pellentesque, rhoncus varius tortor. Donec nulla elit, eleifend aliquet facilisis eu, suscipit sed magna.&lt;/p&gt;
+&lt;p&gt;If you already worked a bit with Docker, maybe did you end-up in a situation were you needed to launch/create/manage a new container &lt;strong&gt;from&lt;/strong&gt; an already existing one. For example, when you are running a dockerized Jenkins instance and need to create ephemeral containers in your pipeline to perform build tasks.&lt;/p&gt;
 
-&lt;p&gt;Sed ut elit sollicitudin, tristique tortor quis, condimentum velit. Mauris ut tellus feugiat, sodales neque ac, volutpat neque. Curabitur imperdiet neque tellus, ut ullamcorper lectus dapibus sit amet. Ut molestie, quam vitae eleifend sollicitudin, tellus magna posuere arcu, vel lobortis nulla tellus sed justo. Etiam dolor magna, sollicitudin nec blandit a, volutpat quis risus. Pellentesque hendrerit pharetra convallis. Curabitur consectetur a quam sollicitudin viverra. Quisque pulvinar leo lorem, eget mollis ipsum sollicitudin ut. Nam ut efficitur lectus. Donec nec est tortor. Aenean efficitur massa at ipsum posuere congue. Cras mi massa, molestie in tincidunt et, congue in justo. Fusce libero nibh, egestas vel erat quis, pretium pharetra dui.&lt;/p&gt;
+&lt;p&gt;In such case, a quick Google search will offers you two main options :&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Docker inside Docker (DinD) :&lt;/strong&gt; you perform a full Docker installation within you container. Basically, you run Docker on top of another Docker. I’m not a big fan of this approach and some people much more knowledgeable than me have explained &lt;a href=&quot;https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/&quot;&gt;why it might be a bad idea&lt;/a&gt; (spoiler: filesystem issues and risks of corruption). This options however seems to remain relevant in some cases, for instance if you are using &lt;a href=&quot;https://applatix.com/case-docker-docker-kubernetes-part/&quot;&gt;Kubernetes&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Docker outside Docker (DooD) :&lt;/strong&gt; you share the Docker socket of the host with your hosted container.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;p&gt;Aliquam erat volutpat. Aliquam erat volutpat. Proin pellentesque nulla vitae augue ullamcorper mollis. Nulla eu elit in tellus viverra fermentum. Sed erat lacus, dapibus et euismod in, interdum vitae magna. Quisque ligula dolor, dignissim vel odio vel, dictum tempus urna. Phasellus volutpat nec ipsum id accumsan.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock alpine&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Once inside the container, performing request to the docker socket become as simple as installing curl and doing :&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;curl --unix-socket /var/run/docker.sock http://localhost/containers/json&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Obviously, you can also install the Docker cli for a user experience identical to the one you have on the host.&lt;/p&gt;
+
+&lt;p&gt;In my case, I’m running my containers on a small dedicated server using Docker compose. Mainly to perform per commit build jobs on a couple of open-source projects I follow. So DinD doesn’t seems like a good option.&lt;/p&gt;
+
+&lt;p&gt;This left us with the DooD approach. However, as a former “offensive security” guy, I can’t accept to break the isolation between my containers and my host so easily. Indeed, in case of compromising of the container with access to the Docker socket, getting root access on the host can be easily achieved.&lt;/p&gt;
+
+&lt;p&gt;All  an attacker would have to do is to download the standalone &lt;a href=&quot;https://download.docker.com/linux/static/stable/x86_64/&quot;&gt;docker client&lt;/a&gt;, launch a new busybox container (running by default as root) mapping the root of the host to a directory, and then chroot into it :&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;docker run -u 0 -ti --rm -v /:/media/host/ busybox chroot /media/host&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Note : This is the exact same reason why it is considered that being in the docker group is equal to have root privilege. It works from the host too.&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;securing-the-docker-socket-using-nginx-&quot;&gt;Securing the Docker socket using Nginx ?&lt;/h2&gt;
+
+&lt;p&gt;When I saw that the Docker socket gave access to a Web API, my first though was “reverse-proxy”. If you are not familiar with this concept, a reverse-proxy stand between a web server and its client and forward their requests to it. A reverse-proxy also allow to perform caching, load-balancing and… requests filtering ! To solve our issue, we can map our docker socket to a reverse-proxy container, configure our docker client to work with a remote socket and filter its HTTP requests to only allow what we want.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/uploads/2018/09/schema-reverse-proxy.jpg&quot; alt=&quot;Static Library Link&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;One of the most commonly used reverse proxy is Nginx, which happens to have a ready to use official image on &lt;a href=&quot;https://hub.docker.com/_/nginx/&quot;&gt;Dockerhub&lt;/a&gt;. Neat right ? No.&lt;/p&gt;
+
+&lt;p&gt;By doing so, I basically move my risk of compromising from my Jenkins container to my Nginx container. The attack surface is reduced (since Jenkins is &lt;a href=&quot;https://www.cvedetails.com/product/34004/Jenkins-Jenkins.html?vendor_id=15865&quot;&gt;not realy&lt;/a&gt; the most secure software ever), but I still end-up with a full-sized docker container, either based on alpine or debian stretch, running a service with much more features than actually needed.&lt;/p&gt;
+
+&lt;p&gt;In some (most ?) cases it may seems like an acceptable solution, but let’s get paranoid and see how we can do it better.&lt;/p&gt;
+
+&lt;h2 id=&quot;scratch-images-and-golang-to-the-rescue&quot;&gt;Scratch images and Golang to the rescue&lt;/h2&gt;
+
+&lt;p&gt;A neat way to have an as empty as possible docker image is to build it “FROM scratch”, which basicaly means that your image will &lt;a href=&quot;https://embano1.github.io/post/scratch/&quot;&gt;“only”&lt;/a&gt; contains what you put in it. No &lt;code class=&quot;highlighter-rouge&quot;&gt;sh&lt;/code&gt;, no &lt;code class=&quot;highlighter-rouge&quot;&gt;/bin&lt;/code&gt;, no &lt;code class=&quot;highlighter-rouge&quot;&gt;/lib&lt;/code&gt;, no &lt;code class=&quot;highlighter-rouge&quot;&gt;thing&lt;/code&gt;. The first question that should come up to your mind is : &lt;em&gt;What about dependencies ?&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;If you are coding in Java you need the JVM, if you are coding in Python you need the Python interpreter, if you are coding in Ruby you need the Ruby interpreter and if you are coding in C/C++ you have to wear your original &lt;em&gt;Jurassic Park&lt;/em&gt; t-shirt and code with &lt;em&gt;Stranger Things&lt;/em&gt; in the background for maximum efficiency. We don’t want that.&lt;/p&gt;
+
+&lt;p&gt;Luckily, Golang is a language offering just the level of abstraction we need to code a reverse-proxy painlessly while offering all the capabilities of a compiled language, including &lt;strong&gt;static compilation&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/uploads/2018/09/StaticLibraryLink.png&quot; alt=&quot;Static Library Link&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Static compilation is a compilation process resulting in a standalone binary embeding all its dependencies. For instance, a software developed in C and statically compiled won’t rely on the system ‘'’libc’’’ but the one it as been compiled with. The same thing can be easily achieve in Go :&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags &quot;-static&quot;' src/reverse-proxy.go&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;we-got-a-plan-&quot;&gt;We got a plan !&lt;/h2&gt;
+
+&lt;p&gt;With this information in mind, all me now have to do is apply the classic “make it work, then make it better” method :&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Create a basic Go reverse-proxy and move it to a scratch image&lt;/li&gt;
+  &lt;li&gt;Add filtering capabilities&lt;/li&gt;
+  &lt;li&gt;Add HTTPS support, client authentication and per client filtering policies&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Each of those points will be the subject of dedicated blog posts in this serie.&lt;/p&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/&quot;&gt;https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://applatix.com/case-docker-docker-kubernetes-part/&quot;&gt;https://applatix.com/case-docker-docker-kubernetes-part/&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://embano1.github.io/post/scratch/&quot;&gt;https://embano1.github.io/post/scratch/&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.bogotobogo.com/cplusplus/libraries.php&quot;&gt;https://www.bogotobogo.com/cplusplus/libraries.php&lt;/a&gt; [Static Library Link schema]&lt;/li&gt;
+&lt;/ul&gt;
 </description>
         <pubDate>Sun, 16 Sep 2018 14:38:43 -0500</pubDate>
         <link>//golang-reverse-proxy-1-4/</link>
         <guid isPermaLink="true">//golang-reverse-proxy-1-4/</guid>
         
-        <category>other</category>
+        <category>Docker</category>
+        
+        <category>Golang</category>
         
         
       </item>
