@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>//</link>
     <atom:link href="//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 19 Sep 2018 07:03:10 -0500</pubDate>
-    <lastBuildDate>Wed, 19 Sep 2018 07:03:10 -0500</lastBuildDate>
+    <pubDate>Thu, 20 Sep 2018 03:59:00 -0500</pubDate>
+    <lastBuildDate>Thu, 20 Sep 2018 03:59:00 -0500</lastBuildDate>
     <generator>Jekyll v3.8.3</generator>
     
       <item>
@@ -59,13 +59,13 @@
 
 &lt;p&gt;A neat way to have an as empty as possible docker image is to build it “FROM scratch”, which basicaly means that your image will &lt;a href=&quot;https://embano1.github.io/post/scratch/&quot;&gt;“only”&lt;/a&gt; contains what you put in it. No &lt;code class=&quot;highlighter-rouge&quot;&gt;sh&lt;/code&gt;, no &lt;code class=&quot;highlighter-rouge&quot;&gt;/bin&lt;/code&gt;, no &lt;code class=&quot;highlighter-rouge&quot;&gt;/lib&lt;/code&gt;, no &lt;code class=&quot;highlighter-rouge&quot;&gt;thing&lt;/code&gt;. The first question that should come up to your mind is : &lt;em&gt;What about dependencies ?&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;If you are coding in Java you need the JVM, if you are coding in Python you need the Python interpreter, if you are coding in Ruby you need the Ruby interpreter and if you are coding in C/C++ you have to wear your original &lt;em&gt;Jurassic Park&lt;/em&gt; t-shirt and code with &lt;em&gt;Stranger Things&lt;/em&gt; in the background for maximum efficiency. We don’t want that.&lt;/p&gt;
+&lt;p&gt;If you are coding in Java you need the JVM, if you are coding in Python you need the Python interpreter and if you are coding in C/C++ you have to wear your original &lt;em&gt;Jurassic Park&lt;/em&gt; t-shirt and code with &lt;em&gt;Stranger Things&lt;/em&gt; in the background for maximum efficiency. We don’t want that.&lt;/p&gt;
 
 &lt;p&gt;Luckily, Golang is a language offering just the level of abstraction we need to code a reverse-proxy painlessly while offering all the capabilities of a compiled language, including &lt;strong&gt;static compilation&lt;/strong&gt;.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;assets/uploads/2018/09/StaticLibraryLink.png&quot; alt=&quot;Static Library Link&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Static compilation is a compilation process resulting in a standalone binary embeding all its dependencies. For instance, a software developed in C and statically compiled won’t rely on the system ‘'’libc’’’ but the one it as been compiled with. The same thing can be easily achieve in Go :&lt;/p&gt;
+&lt;p&gt;Static compilation is a compilation process resulting in a standalone binary embeding all its dependencies. For instance, a software developed in C and statically compiled won’t rely on the system &lt;code class=&quot;highlighter-rouge&quot;&gt;libc&lt;/code&gt; but the one it as been compiled with. The same thing can be easily achieve in Go :&lt;/p&gt;
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags &quot;-static&quot;' src/reverse-proxy.go&lt;/code&gt;&lt;/p&gt;
 

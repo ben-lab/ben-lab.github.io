@@ -194,13 +194,13 @@
 
 <p>A neat way to have an as empty as possible docker image is to build it “FROM scratch”, which basicaly means that your image will <a href="https://embano1.github.io/post/scratch/">“only”</a> contains what you put in it. No <code class="highlighter-rouge">sh</code>, no <code class="highlighter-rouge">/bin</code>, no <code class="highlighter-rouge">/lib</code>, no <code class="highlighter-rouge">thing</code>. The first question that should come up to your mind is : <em>What about dependencies ?</em></p>
 
-<p>If you are coding in Java you need the JVM, if you are coding in Python you need the Python interpreter, if you are coding in Ruby you need the Ruby interpreter and if you are coding in C/C++ you have to wear your original <em>Jurassic Park</em> t-shirt and code with <em>Stranger Things</em> in the background for maximum efficiency. We don’t want that.</p>
+<p>If you are coding in Java you need the JVM, if you are coding in Python you need the Python interpreter and if you are coding in C/C++ you have to wear your original <em>Jurassic Park</em> t-shirt and code with <em>Stranger Things</em> in the background for maximum efficiency. We don’t want that.</p>
 
 <p>Luckily, Golang is a language offering just the level of abstraction we need to code a reverse-proxy painlessly while offering all the capabilities of a compiled language, including <strong>static compilation</strong>.</p>
 
 <p><img src="assets/uploads/2018/09/StaticLibraryLink.png" alt="Static Library Link" /></p>
 
-<p>Static compilation is a compilation process resulting in a standalone binary embeding all its dependencies. For instance, a software developed in C and statically compiled won’t rely on the system ‘'’libc’’’ but the one it as been compiled with. The same thing can be easily achieve in Go :</p>
+<p>Static compilation is a compilation process resulting in a standalone binary embeding all its dependencies. For instance, a software developed in C and statically compiled won’t rely on the system <code class="highlighter-rouge">libc</code> but the one it as been compiled with. The same thing can be easily achieve in Go :</p>
 
 <p><code class="highlighter-rouge">CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' src/reverse-proxy.go</code></p>
 
