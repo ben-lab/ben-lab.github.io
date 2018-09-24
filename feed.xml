@@ -5,9 +5,9 @@
     <description>Appsec and DevSecOps</description>
     <link>//</link>
     <atom:link href="//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 20 Sep 2018 03:59:00 -0500</pubDate>
-    <lastBuildDate>Thu, 20 Sep 2018 03:59:00 -0500</lastBuildDate>
-    <generator>Jekyll v3.8.3</generator>
+    <pubDate>Mon, 24 Sep 2018 16:03:50 -0500</pubDate>
+    <lastBuildDate>Mon, 24 Sep 2018 16:03:50 -0500</lastBuildDate>
+    <generator>Jekyll v3.8.4</generator>
     
       <item>
         <title>Protecting a shared Docker socket using a Golang reverse-proxy (1/4)</title>
@@ -45,13 +45,13 @@
 
 &lt;h2 id=&quot;securing-the-docker-socket-using-nginx-&quot;&gt;Securing the Docker socket using Nginx ?&lt;/h2&gt;
 
-&lt;p&gt;When I saw that the Docker socket gave access to a Web API, my first though was “reverse-proxy”. If you are not familiar with this concept, a reverse-proxy stand between a web server and its client and forward their requests to it. A reverse-proxy also allow to perform caching, load-balancing and… requests filtering ! To solve our issue, we can map our docker socket to a reverse-proxy container, configure our docker client to work with a remote socket and filter its HTTP requests to only allow what we want.&lt;/p&gt;
+&lt;p&gt;When I saw that the Docker socket gave access to a Web API, my first though was “reverse-proxy”. If you are not familiar with this concept, a reverse-proxy stand between a web server and its clients and forward their requests to it. A reverse-proxy also allow to perform different tasks such as caching, load-balancing and… requests filtering ! To solve our issue, we can map our docker socket to a reverse-proxy container, configure our docker client to work with a remote socket and filter its HTTP requests to only allow what we want.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;assets/uploads/2018/09/schema-reverse-proxy.jpg&quot; alt=&quot;Static Library Link&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;One of the most commonly used reverse proxy is Nginx, which happens to have a ready to use official image on &lt;a href=&quot;https://hub.docker.com/_/nginx/&quot;&gt;Dockerhub&lt;/a&gt;. Neat right ? No.&lt;/p&gt;
 
-&lt;p&gt;By doing so, I basically move my risk of compromising from my Jenkins container to my Nginx container. The attack surface is reduced (since Jenkins is &lt;a href=&quot;https://www.cvedetails.com/product/34004/Jenkins-Jenkins.html?vendor_id=15865&quot;&gt;not realy&lt;/a&gt; the most secure software ever), but I still end-up with a full-sized docker container, either based on alpine or debian stretch, running a service with much more features than actually needed.&lt;/p&gt;
+&lt;p&gt;By doing so, we basically move our risk of compromising from the Jenkins container to the Nginx one. The attack surface is reduced (since Jenkins is &lt;a href=&quot;https://www.cvedetails.com/product/34004/Jenkins-Jenkins.html?vendor_id=15865&quot;&gt;not realy&lt;/a&gt; the most secure software ever), but we still end-up with a full-sized docker container, either based on alpine or debian stretch, running a service with much more features than actually needed.&lt;/p&gt;
 
 &lt;p&gt;In some (most ?) cases it may seems like an acceptable solution, but let’s get paranoid and see how we can do it better.&lt;/p&gt;
 
