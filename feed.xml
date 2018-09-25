@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>//</link>
     <atom:link href="//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 25 Sep 2018 08:16:27 -0500</pubDate>
-    <lastBuildDate>Tue, 25 Sep 2018 08:16:27 -0500</lastBuildDate>
+    <pubDate>Tue, 25 Sep 2018 09:52:41 -0500</pubDate>
+    <lastBuildDate>Tue, 25 Sep 2018 09:52:41 -0500</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -85,6 +85,7 @@
 &lt;p&gt;If you are looking for a production ready solution and are not realy interested into the DIY part, you may want to have a look at :&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;&lt;a href=&quot;https://github.com/open-policy-agent/opa&quot;&gt;Open Policy Agent&lt;/a&gt;, a general-purpose policy engine which happens to have a tutorial for &lt;a href=&quot;https://www.openpolicyagent.org/docs/docker-authorization.html&quot;&gt;this exact use case&lt;/a&gt;. However it requires to install a Docker plugin and doesn’t offer actual client authentication.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;Tyk&quot;&gt;https://github.com/TykTechnologies/tyk&lt;/a&gt;, a lightweight API Gateway coded in Go, offering filtering capabilities. However, it doesn’t seem to filter parameters.&lt;/li&gt;
   &lt;li&gt;Your current API gateway or reverse-proxy that may offer some kind of ACL capabilities for API requests.&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -94,6 +95,7 @@
   &lt;li&gt;&lt;a href=&quot;https://applatix.com/case-docker-docker-kubernetes-part/&quot;&gt;https://applatix.com/case-docker-docker-kubernetes-part/&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://embano1.github.io/post/scratch/&quot;&gt;https://embano1.github.io/post/scratch/&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.bogotobogo.com/cplusplus/libraries.php&quot;&gt;https://www.bogotobogo.com/cplusplus/libraries.php&lt;/a&gt; [Static Library Link schema]&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/TykTechnologies/tyk&quot;&gt;https://github.com/TykTechnologies/tyk&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.openpolicyagent.org/docs/docker-authorization.html&quot;&gt;https://www.openpolicyagent.org/docs/docker-authorization.html&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
