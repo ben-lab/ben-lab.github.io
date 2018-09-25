@@ -142,7 +142,7 @@
     </h1>
 
     <div class="post-info">
-      <p class="alignleft"><span class="google-icon-date">16 Sep 2018</span> <a class="post-comments-count" href="/golang-reverse-proxy-1-4/#disqus_thread" data-disqus-identifier=""></a></p>
+      <p class="alignleft"><span class="google-icon-date">24 Sep 2018</span> <a class="post-comments-count" href="/golang-reverse-proxy-1-4/#disqus_thread" data-disqus-identifier=""></a></p>
       <p class="alignright">Author : <strong>Ben</strong></p>
     </div>
 
@@ -215,12 +215,21 @@
 
 <p>Each of those points will be the subject of dedicated blog posts in this serie.</p>
 
+<h2 id="alternative-solutions">Alternative solutions</h2>
+
+<p>If you are looking for a production ready solution and are not realy interested into the DIY part, you may want to have a look at :</p>
+<ul>
+  <li><a href="https://github.com/open-policy-agent/opa">Open Policy Agent</a>, a general-purpose policy engine which happens to have a tutorial for <a href="https://www.openpolicyagent.org/docs/docker-authorization.html">this exact use case</a>. However it requires to install a Docker plugin.</li>
+  <li>Your current API gateway or reverse-proxy that may offer some kind of ACL capabilities for API requests.</li>
+</ul>
+
 <h2 id="references">References</h2>
 <ul>
   <li><a href="https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/">https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/</a></li>
   <li><a href="https://applatix.com/case-docker-docker-kubernetes-part/">https://applatix.com/case-docker-docker-kubernetes-part/</a></li>
   <li><a href="https://embano1.github.io/post/scratch/">https://embano1.github.io/post/scratch/</a></li>
   <li><a href="https://www.bogotobogo.com/cplusplus/libraries.php">https://www.bogotobogo.com/cplusplus/libraries.php</a> [Static Library Link schema]</li>
+  <li><a href="https://www.openpolicyagent.org/docs/docker-authorization.html">https://www.openpolicyagent.org/docs/docker-authorization.html</a></li>
 </ul>
 
 
