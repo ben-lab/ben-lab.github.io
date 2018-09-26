@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>//</link>
     <atom:link href="//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 25 Sep 2018 10:40:06 -0500</pubDate>
-    <lastBuildDate>Tue, 25 Sep 2018 10:40:06 -0500</lastBuildDate>
+    <pubDate>Wed, 26 Sep 2018 06:09:45 -0500</pubDate>
+    <lastBuildDate>Wed, 26 Sep 2018 06:09:45 -0500</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -65,7 +65,7 @@
 
 &lt;p&gt;&lt;img src=&quot;assets/uploads/2018/09/StaticLibraryLink.png&quot; alt=&quot;Static Library Link&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Static compilation is a compilation process resulting in a standalone binary embeding all its dependencies. For instance, a software developed in C and statically compiled won’t rely on the system &lt;code class=&quot;highlighter-rouge&quot;&gt;libc&lt;/code&gt; but the one it as been compiled with. The same thing can be easily achieve in Go :&lt;/p&gt;
+&lt;p&gt;Static compilation is a compilation process resulting in a standalone binary embeding all its dependencies. For instance, a software developed in C and statically compiled won’t rely on the system &lt;code class=&quot;highlighter-rouge&quot;&gt;libc&lt;/code&gt; but the one it as been compiled with. The same thing can easily be achieved in Go :&lt;/p&gt;
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags &quot;-static&quot;' src/reverse-proxy.go&lt;/code&gt;&lt;/p&gt;
 

@@ -200,7 +200,7 @@
 
 <p><img src="assets/uploads/2018/09/StaticLibraryLink.png" alt="Static Library Link" /></p>
 
-<p>Static compilation is a compilation process resulting in a standalone binary embeding all its dependencies. For instance, a software developed in C and statically compiled won’t rely on the system <code class="highlighter-rouge">libc</code> but the one it as been compiled with. The same thing can be easily achieve in Go :</p>
+<p>Static compilation is a compilation process resulting in a standalone binary embeding all its dependencies. For instance, a software developed in C and statically compiled won’t rely on the system <code class="highlighter-rouge">libc</code> but the one it as been compiled with. The same thing can easily be achieved in Go :</p>
 
 <p><code class="highlighter-rouge">CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' src/reverse-proxy.go</code></p>
 
