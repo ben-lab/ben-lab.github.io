@@ -186,7 +186,7 @@
 
 <p>One of the most commonly used reverse proxy is Nginx, which happens to have a ready to use official image on <a href="https://hub.docker.com/_/nginx/">Dockerhub</a>. Neat right ? No.</p>
 
-<p>By doing so, we basically move our risk of compromising from the Jenkins container to the Nginx one. The attack surface is reduced (since Jenkins is <a href="https://www.cvedetails.com/product/34004/Jenkins-Jenkins.html?vendor_id=15865">not realy</a> the most secure software ever), but we still end-up with a full-sized docker container, either based on alpine or debian stretch, running a service with much more features than actually needed.</p>
+<p>By doing so, we basically move our risk of compromising from the Jenkins container to the Nginx one. The attack surface is reduced (since Jenkins is <a href="https://www.cvedetails.com/product/34004/Jenkins-Jenkins.html?vendor_id=15865">not realy</a> the most secure software ever), but we still end-up with a full-sized docker container, either based on <a href="https://justi.cz/security/2018/09/13/alpine-apk-rce.html">alpine</a> or <a href="http://dance.csc.ncsu.edu/papers/codaspy17.pdf">debian</a>, running a service with much more features than actually needed.</p>
 
 <p>In some (most ?) cases it may seems like an acceptable solution, but let’s get paranoid and see how we can do it better.</p>
 
@@ -228,6 +228,8 @@
 <ul>
   <li><a href="https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/">https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/</a></li>
   <li><a href="https://applatix.com/case-docker-docker-kubernetes-part/">https://applatix.com/case-docker-docker-kubernetes-part/</a></li>
+  <li><a href="https://justi.cz/security/2018/09/13/alpine-apk-rce.html">https://justi.cz/security/2018/09/13/alpine-apk-rce.html</a></li>
+  <li><a href="http://dance.csc.ncsu.edu/papers/codaspy17.pdf">http://dance.csc.ncsu.edu/papers/codaspy17.pdf</a></li>
   <li><a href="https://embano1.github.io/post/scratch/">https://embano1.github.io/post/scratch/</a></li>
   <li><a href="https://www.bogotobogo.com/cplusplus/libraries.php">https://www.bogotobogo.com/cplusplus/libraries.php</a> [Static Library Link schema]</li>
   <li><a href="https://github.com/TykTechnologies/tyk">https://github.com/TykTechnologies/tyk</a></li>
