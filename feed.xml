@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>//</link>
     <atom:link href="//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 27 Sep 2018 06:45:25 -0500</pubDate>
-    <lastBuildDate>Thu, 27 Sep 2018 06:45:25 -0500</lastBuildDate>
+    <pubDate>Thu, 27 Sep 2018 09:17:28 -0500</pubDate>
+    <lastBuildDate>Thu, 27 Sep 2018 09:17:28 -0500</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -50,7 +50,7 @@
 
 &lt;details&gt;
     &lt;summary style=&quot;&quot; onclick=&quot;javascript:launchOrPausePlayer('docker-privesc')&quot;&gt;Demo&lt;/summary&gt;
-    &lt;asciinema-player id=&quot;docker-privesc&quot; src=&quot;/assets/uploads/2018/golang-reverse-proxy-1-4/docker_privesc.cast&quot; playing=&quot;false&quot; speed=&quot;1.75&quot; rows=&quot;20&quot; cols=&quot;90&quot;&gt;&lt;/asciinema-player&gt;
+    &lt;asciinema-player id=&quot;docker-privesc&quot; src=&quot;/assets/uploads/2018/golang-reverse-proxy-1-4/docker_privesc.cast&quot; playing=&quot;false&quot; speed=&quot;1.50&quot; rows=&quot;20&quot; cols=&quot;90&quot;&gt;&lt;/asciinema-player&gt;
     &lt;script src=&quot;/assets/res/asciinema-player.js&quot;&gt;&lt;/script&gt;
 &lt;/details&gt;
 &lt;p&gt;&lt;/p&gt;
@@ -110,7 +110,7 @@
   &lt;li&gt;&lt;a href=&quot;https://justi.cz/security/2018/09/13/alpine-apk-rce.html&quot;&gt;https://justi.cz/security/2018/09/13/alpine-apk-rce.html&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;http://dance.csc.ncsu.edu/papers/codaspy17.pdf&quot;&gt;http://dance.csc.ncsu.edu/papers/codaspy17.pdf&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://embano1.github.io/post/scratch/&quot;&gt;https://embano1.github.io/post/scratch/&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.bogotobogo.com/cplusplus/libraries.php&quot;&gt;https://www.bogotobogo.com/cplusplus/libraries.php&lt;/a&gt; [Static Library Link schema]&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.bogotobogo.com/cplusplus/libraries.php&quot;&gt;https://www.bogotobogo.com/cplusplus/libraries.php&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://github.com/TykTechnologies/tyk&quot;&gt;https://github.com/TykTechnologies/tyk&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.openpolicyagent.org/docs/docker-authorization.html&quot;&gt;https://www.openpolicyagent.org/docs/docker-authorization.html&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
