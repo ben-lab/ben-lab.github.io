@@ -74,7 +74,7 @@
 <meta property="og:url" content="/" />
 <meta property="og:site_name" content="ben’s lab" />
 <script type="application/ld+json">
-{"@type":"WebSite","headline":"Blog","url":"/","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/icones/logo.png"},"name":"Ben"},"name":"ben’s lab","author":{"@type":"Person","name":"Ben"},"description":"Appsec and DevSecOps","@context":"http://schema.org"}</script>
+{"@type":"WebSite","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/icones/logo.png"},"name":"Ben"},"url":"/","name":"ben’s lab","author":{"@type":"Person","name":"Ben"},"description":"Appsec and DevSecOps","headline":"Blog","@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -212,11 +212,11 @@
 <p><code class="highlighter-rouge">docker run -u 0 -ti --rm -v /:/media/host/ busybox chroot /media/host</code></p>
 
 <details>
-    <summary style="" onclick="javascript:launchOrPausePlayer('docker-privesc')">Demo</summary>
-    <asciinema-player id="docker-privesc" src="/assets/uploads/2018/golang-reverse-proxy-1-4/docker_privesc.cast" playing="false" speed="1.50" rows="20" cols="90"></asciinema-player>
+    <summary style="" onclick="javascript:launchOrPausePlayer('docker-privesc1')">Demo</summary>
+    <asciinema-player id="docker-privesc1" src="/assets/uploads/2018/golang-reverse-proxy-1-4/docker_privesc1.cast" playing="false" speed="2.5" rows="20" cols="90"></asciinema-player>
     <script>
             var width = window.innerWidth
-            var player = document.getElementById("docker-privesc")
+            var player = document.getElementById("docker-privesc1")
 
             if(width < 1270 && width > 768) {
                 player.setAttribute("cols", Math.round(width/1270*80))
@@ -229,7 +229,25 @@
 </details>
 <p></p>
 
-<p><em>Note : This is the exact same reason why it is considered that being in the docker group is equal to have root privilege. It works from the host too.</em></p>
+<p><em>Note : This is the exact same reason why it is considered that being in the docker group is equal to have root privilege. It works from the host too :</em></p>
+
+<details>
+    <summary style="" onclick="javascript:launchOrPausePlayer('docker-privesc2')">Demo</summary>
+    <asciinema-player id="docker-privesc2" src="/assets/uploads/2018/golang-reverse-proxy-1-4/docker_privesc2.cast" playing="false" speed="1.50" rows="20" cols="90"></asciinema-player>
+    <script>
+            var width = window.innerWidth
+            var player = document.getElementById("docker-privesc2")
+
+            if(width < 1270 && width > 768) {
+                player.setAttribute("cols", Math.round(width/1270*80))
+            }
+            else {
+                player.setAttribute("cols", Math.round(width/768*80))
+            }
+    </script>    
+    <script src="/assets/res/asciinema-player.js"></script>
+</details>
+<p></p>
 
 <h2 id="securing-the-docker-socket-using-nginx-">Securing the Docker socket using Nginx ?</h2>
 
