@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>//</link>
     <atom:link href="//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 27 Sep 2018 12:32:05 -0500</pubDate>
-    <lastBuildDate>Thu, 27 Sep 2018 12:32:05 -0500</lastBuildDate>
+    <pubDate>Thu, 27 Sep 2018 13:33:03 -0500</pubDate>
+    <lastBuildDate>Thu, 27 Sep 2018 13:33:03 -0500</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -35,8 +35,14 @@
     &lt;summary style=&quot;margin-left: 25px&quot; onclick=&quot;javascript:launchOrPausePlayer('player-demo-wget')&quot;&gt;Demo&lt;/summary&gt;
     &lt;asciinema-player id=&quot;player-demo-wget&quot; src=&quot;/assets/uploads/2018/golang-reverse-proxy-1-4/curl_docker_socket.cast&quot; playing=&quot;false&quot; speed=&quot;3.5&quot; rows=&quot;20&quot; cols=&quot;90&quot;&gt;&lt;/asciinema-player&gt;
     &lt;script&gt;
-            if(window.innerWidth &lt; 1270) {
-                document.getElementById(&quot;player-demo-wget&quot;).setAttribute(&quot;cols&quot;, &quot;40&quot;)
+            var width = window.innerWidth
+            var player = document.getElementById(&quot;player-demo-wget&quot;)
+
+            if(width &lt; 1270 &amp;&amp; width &gt; 768) {
+                player.setAttribute(&quot;cols&quot;, Math.round(width/1270*80))
+            }
+            else {
+                player.setAttribute(&quot;cols&quot;, Math.round(width/768*80))
             }
     &lt;/script&gt;    
     &lt;script src=&quot;/assets/res/asciinema-player.js&quot;&gt;&lt;/script&gt;
@@ -57,8 +63,14 @@
     &lt;summary style=&quot;&quot; onclick=&quot;javascript:launchOrPausePlayer('docker-privesc')&quot;&gt;Demo&lt;/summary&gt;
     &lt;asciinema-player id=&quot;docker-privesc&quot; src=&quot;/assets/uploads/2018/golang-reverse-proxy-1-4/docker_privesc.cast&quot; playing=&quot;false&quot; speed=&quot;1.50&quot; rows=&quot;20&quot; cols=&quot;90&quot;&gt;&lt;/asciinema-player&gt;
     &lt;script&gt;
-            if(window.innerWidth &lt; 1270) {
-                document.getElementById(&quot;docker-privesc&quot;).setAttribute(&quot;cols&quot;, &quot;40&quot;)
+            var width = window.innerWidth
+            var player = document.getElementById(&quot;docker-privesc&quot;)
+
+            if(width &lt; 1270 &amp;&amp; width &gt; 768) {
+                player.setAttribute(&quot;cols&quot;, Math.round(width/1270*80))
+            }
+            else {
+                player.setAttribute(&quot;cols&quot;, Math.round(width/768*80))
             }
     &lt;/script&gt;    
     &lt;script src=&quot;/assets/res/asciinema-player.js&quot;&gt;&lt;/script&gt;
