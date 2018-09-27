@@ -20,6 +20,7 @@
   <link rel="stylesheet" type="text/css" href="/css/syntax.css">
   <link rel="stylesheet" type="text/css" href="/css/hyde.css">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <link rel="stylesheet" type="text/css" href="/css/asciinema-player.css">
   <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Signika:600">
   <link rel="stylesheet" type="text/css" href="/css/print.css" media="print">
   <!-- Icons -->
@@ -46,6 +47,21 @@
   <link type="application/atom+xml" rel="alternate" href="/feed.xml" title="ben's lab" />
 
   <script src="/assets/res/jquery-3.1.0.min.js"></script>
+  <script>
+    function launchOrPausePlayer(id) {
+      var player = document.getElementById(id)
+      var playing = player.attributes.getNamedItem("playing").value
+
+      if(playing == "false") {
+        player.play()
+        player.setAttribute("playing", "true")
+      }
+      else {
+        player.pause()
+        player.setAttribute("playing", "false")
+      }
+    }
+  </script>
   <!-- Begin Jekyll SEO tag v2.5.0 -->
 <meta name="generator" content="Jekyll v3.8.4" />
 <meta property="og:title" content="Protecting a shared Docker socket using a Golang reverse-proxy (1/4)" />
@@ -56,11 +72,11 @@
 <link rel="canonical" href="/golang-reverse-proxy-1-4/" />
 <meta property="og:url" content="/golang-reverse-proxy-1-4/" />
 <meta property="og:site_name" content="ben’s lab" />
-<meta property="og:image" content="/assets/uploads/2018/09/golang_and_docker.png" />
+<meta property="og:image" content="/assets/uploads/2018/golang-reverse-proxy-1-4/golang_and_docker.png" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2018-09-24T11:10:00-05:00" />
 <script type="application/ld+json">
-{"dateModified":"2018-09-24T11:10:00-05:00","@type":"BlogPosting","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/icones/logo.png"},"name":"Ben"},"image":"/assets/uploads/2018/09/golang_and_docker.png","mainEntityOfPage":{"@type":"WebPage","@id":"/golang-reverse-proxy-1-4/"},"url":"/golang-reverse-proxy-1-4/","author":{"@type":"Person","name":"Ben"},"description":"Protecting a shared Docker socket using a Golang reverse-proxy","headline":"Protecting a shared Docker socket using a Golang reverse-proxy (1/4)","datePublished":"2018-09-24T11:10:00-05:00","@context":"http://schema.org"}</script>
+{"dateModified":"2018-09-24T11:10:00-05:00","@type":"BlogPosting","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/icones/logo.png"},"name":"Ben"},"image":"/assets/uploads/2018/golang-reverse-proxy-1-4/golang_and_docker.png","mainEntityOfPage":{"@type":"WebPage","@id":"/golang-reverse-proxy-1-4/"},"url":"/golang-reverse-proxy-1-4/","author":{"@type":"Person","name":"Ben"},"description":"Protecting a shared Docker socket using a Golang reverse-proxy","headline":"Protecting a shared Docker socket using a Golang reverse-proxy (1/4)","datePublished":"2018-09-24T11:10:00-05:00","@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -133,7 +149,7 @@
       <div class="post">
   
   <div class="post-cover">
-    <img src="/assets/uploads/2018/09/golang_and_docker.png" alt="Protecting a shared Docker socket using a Golang reverse-proxy (1/4)" title="Protecting a shared Docker socket using a Golang reverse-proxy (1/4)" />
+    <img src="/assets/uploads/2018/golang-reverse-proxy-1-4/golang_and_docker.png" alt="Protecting a shared Docker socket using a Golang reverse-proxy (1/4)" title="Protecting a shared Docker socket using a Golang reverse-proxy (1/4)" />
   </div>
   
   <h1 class="post-title">Protecting a shared Docker socket using a Golang reverse-proxy (1/4)</h1>
@@ -153,15 +169,22 @@
     <p><strong>Docker inside Docker (DinD) :</strong> you perform a full Docker installation within you container. Basically, you run Docker on top of another Docker. I’m not a big fan of this approach and some people much more knowledgeable than me have explained <a href="https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/">why it might be a bad idea</a> (spoiler: filesystem issues and risks of corruption). This options however seems to remain relevant in some cases, for instance if you are using <a href="https://applatix.com/case-docker-docker-kubernetes-part/">Kubernetes</a>.</p>
   </li>
   <li>
-    <p><strong>Docker outside Docker (DooD) :</strong> you share the Docker socket of the host with your hosted container.</p>
+    <p><strong>Docker outside Docker (DooD) :</strong> you share the Docker socket of the host with your hosted container using the <code class="highlighter-rouge">--volume</code> or <code class="highlighter-rouge">-v</code> flags :</p>
+
+    <p><code class="highlighter-rouge">docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock alpine</code></p>
+
+    <p>Once inside the container, performing a request to the docker socket become as simple as installing <code class="highlighter-rouge">curl</code> and doing :</p>
+
+    <p><code class="highlighter-rouge">curl --unix-socket /var/run/docker.sock http://localhost/containers/json</code></p>
   </li>
 </ul>
 
-<p><code class="highlighter-rouge">docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock alpine</code></p>
-
-<p>Once inside the container, performing request to the docker socket become as simple as installing curl and doing :</p>
-
-<p><code class="highlighter-rouge">curl --unix-socket /var/run/docker.sock http://localhost/containers/json</code></p>
+<details>
+    <summary style="margin-left: 25px" onclick="javascript:launchOrPausePlayer('player-demo-wget')">Demo</summary>
+    <asciinema-player id="player-demo-wget" src="/assets/uploads/2018/golang-reverse-proxy-1-4/curl_docker_socket.cast" playing="false" speed="3.5" rows="20" cols="90"></asciinema-player>
+    <script src="/assets/res/asciinema-player.js"></script>
+</details>
+<p></p>
 
 <p>Obviously, you can also install the Docker cli for a user experience identical to the one you have on the host.</p>
 
@@ -173,13 +196,20 @@
 
 <p><code class="highlighter-rouge">docker run -u 0 -ti --rm -v /:/media/host/ busybox chroot /media/host</code></p>
 
+<details>
+    <summary style="" onclick="javascript:launchOrPausePlayer('docker-privesc')">Demo</summary>
+    <asciinema-player id="docker-privesc" src="/assets/uploads/2018/golang-reverse-proxy-1-4/docker_privesc.cast" playing="false" speed="1.75" rows="20" cols="90"></asciinema-player>
+    <script src="/assets/res/asciinema-player.js"></script>
+</details>
+<p></p>
+
 <p><em>Note : This is the exact same reason why it is considered that being in the docker group is equal to have root privilege. It works from the host too.</em></p>
 
 <h2 id="securing-the-docker-socket-using-nginx-">Securing the Docker socket using Nginx ?</h2>
 
 <p>When I saw that the Docker socket gave access to a Web API, my first though was “reverse-proxy”. If you are not familiar with this concept, a reverse-proxy stand between a web server and its clients and forward their requests to it. A reverse-proxy also allow to perform different tasks such as caching, load-balancing and… requests filtering ! To solve our issue, we can map our docker socket to a reverse-proxy container, configure our docker client to work with a remote socket and filter its HTTP requests to only allow what we want.</p>
 
-<p><img src="assets/uploads/2018/09/schema-reverse-proxy.jpg" alt="Static Library Link" /></p>
+<p><img src="assets/uploads/2018/golang-reverse-proxy-1-4/schema-reverse-proxy.jpg" alt="Static Library Link" /></p>
 
 <p>One of the most commonly used reverse proxy is Nginx, which happens to have a ready to use official image on <a href="https://hub.docker.com/_/nginx/">Dockerhub</a>. Neat right ? No.</p>
 
@@ -195,7 +225,7 @@
 
 <p>Luckily, Golang is a language offering just the level of abstraction we need to code a reverse-proxy painlessly while offering all the capabilities of a compiled language, including <strong>static compilation</strong>.</p>
 
-<p><img src="assets/uploads/2018/09/StaticLibraryLink.png" alt="Static Library Link" /></p>
+<p><img src="assets/uploads/2018/golang-reverse-proxy-1-4/StaticLibraryLink.png" alt="Static Library Link" /></p>
 
 <p>Static compilation is a compilation process resulting in a standalone binary embeding all its dependencies. For instance, a software developed in C and statically compiled won’t rely on the system <code class="highlighter-rouge">libc</code> but the one it as been compiled with. The same thing can easily be achieved in Go :</p>
 

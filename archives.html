@@ -20,6 +20,7 @@
   <link rel="stylesheet" type="text/css" href="/css/syntax.css">
   <link rel="stylesheet" type="text/css" href="/css/hyde.css">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <link rel="stylesheet" type="text/css" href="/css/asciinema-player.css">
   <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Signika:600">
   <link rel="stylesheet" type="text/css" href="/css/print.css" media="print">
   <!-- Icons -->
@@ -46,6 +47,21 @@
   <link type="application/atom+xml" rel="alternate" href="/feed.xml" title="ben's lab" />
 
   <script src="/assets/res/jquery-3.1.0.min.js"></script>
+  <script>
+    function launchOrPausePlayer(id) {
+      var player = document.getElementById(id)
+      var playing = player.attributes.getNamedItem("playing").value
+
+      if(playing == "false") {
+        player.play()
+        player.setAttribute("playing", "true")
+      }
+      else {
+        player.pause()
+        player.setAttribute("playing", "false")
+      }
+    }
+  </script>
   <!-- Begin Jekyll SEO tag v2.5.0 -->
 <meta name="generator" content="Jekyll v3.8.4" />
 <meta property="og:title" content="Archives" />
