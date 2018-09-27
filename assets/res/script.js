@@ -6,7 +6,7 @@ anchors.add('h2, h3, h4, h5, h6');
 
 var ToC =
   "<nav role='navigation' class='table-of-contents'>" +
-    "<h2>Dans cet article</h2>" +
+    "<h2>In this post</h2>" +
     "<ul>";
 
 if($("article h2").length > 0) {

@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>//</link>
     <atom:link href="//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 27 Sep 2018 15:48:24 -0500</pubDate>
-    <lastBuildDate>Thu, 27 Sep 2018 15:48:24 -0500</lastBuildDate>
+    <pubDate>Thu, 27 Sep 2018 16:09:53 -0500</pubDate>
+    <lastBuildDate>Thu, 27 Sep 2018 16:09:53 -0500</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -44,8 +44,7 @@
             else if(width &lt; 768){
                 player.setAttribute(&quot;cols&quot;, Math.round(width/768*80))
             }
-    &lt;/script&gt;    
-    &lt;script src=&quot;/assets/res/asciinema-player.js&quot;&gt;&lt;/script&gt;
+    &lt;/script&gt;
 &lt;/details&gt;
 &lt;p&gt;&lt;/p&gt;
 
@@ -72,8 +71,7 @@
             else if(width &lt; 768){
                 player.setAttribute(&quot;cols&quot;, Math.round(width/768*80))
             }
-    &lt;/script&gt;    
-    &lt;script src=&quot;/assets/res/asciinema-player.js&quot;&gt;&lt;/script&gt;
+    &lt;/script&gt;
 &lt;/details&gt;
 &lt;p&gt;&lt;/p&gt;
 
@@ -92,8 +90,7 @@
             else if(width &lt; 768){
                 player.setAttribute(&quot;cols&quot;, Math.round(width/768*80))
             }
-    &lt;/script&gt;    
-    &lt;script src=&quot;/assets/res/asciinema-player.js&quot;&gt;&lt;/script&gt;
+    &lt;/script&gt;
 &lt;/details&gt;
 &lt;p&gt;&lt;/p&gt;
 
