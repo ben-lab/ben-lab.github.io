@@ -62,6 +62,7 @@
       }
     }
   </script>
+
   <!-- Begin Jekyll SEO tag v2.5.0 -->
 <meta name="generator" content="Jekyll v3.8.4" />
 <meta property="og:title" content="Blog" />
@@ -185,6 +186,11 @@
 <details>
     <summary style="margin-left: 25px" onclick="javascript:launchOrPausePlayer('player-demo-wget')">Demo</summary>
     <asciinema-player id="player-demo-wget" src="/assets/uploads/2018/golang-reverse-proxy-1-4/curl_docker_socket.cast" playing="false" speed="3.5" rows="20" cols="90"></asciinema-player>
+    <script>
+            if(window.innerWidth < 1270) {
+                document.getElementById("player-demo-wget").setAttribute("cols", "50")
+            }
+    </script>    
     <script src="/assets/res/asciinema-player.js"></script>
 </details>
 <p></p>
@@ -202,6 +208,11 @@
 <details>
     <summary style="" onclick="javascript:launchOrPausePlayer('docker-privesc')">Demo</summary>
     <asciinema-player id="docker-privesc" src="/assets/uploads/2018/golang-reverse-proxy-1-4/docker_privesc.cast" playing="false" speed="1.50" rows="20" cols="90"></asciinema-player>
+    <script>
+            if(window.innerWidth < 1270) {
+                document.getElementById("docker-privesc").setAttribute("cols", "50")
+            }
+    </script>    
     <script src="/assets/res/asciinema-player.js"></script>
 </details>
 <p></p>
