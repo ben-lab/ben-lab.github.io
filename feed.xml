@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>//</link>
     <atom:link href="//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 27 Sep 2018 14:22:06 -0500</pubDate>
-    <lastBuildDate>Thu, 27 Sep 2018 14:22:06 -0500</lastBuildDate>
+    <pubDate>Thu, 27 Sep 2018 15:48:24 -0500</pubDate>
+    <lastBuildDate>Thu, 27 Sep 2018 15:48:24 -0500</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -38,10 +38,10 @@
             var width = window.innerWidth
             var player = document.getElementById(&quot;player-demo-wget&quot;)
 
-            if(width &lt; 1270 &amp;&amp; width &gt; 768) {
+            if(width &lt; 1270 &amp;&amp; width &gt;= 768) {
                 player.setAttribute(&quot;cols&quot;, Math.round(width/1270*80))
             }
-            else {
+            else if(width &lt; 768){
                 player.setAttribute(&quot;cols&quot;, Math.round(width/768*80))
             }
     &lt;/script&gt;    
@@ -66,10 +66,10 @@
             var width = window.innerWidth
             var player = document.getElementById(&quot;docker-privesc1&quot;)
 
-            if(width &lt; 1270 &amp;&amp; width &gt; 768) {
+            if(width &lt; 1270 &amp;&amp; width &gt;= 768) {
                 player.setAttribute(&quot;cols&quot;, Math.round(width/1270*80))
             }
-            else {
+            else if(width &lt; 768){
                 player.setAttribute(&quot;cols&quot;, Math.round(width/768*80))
             }
     &lt;/script&gt;    
@@ -86,10 +86,10 @@
             var width = window.innerWidth
             var player = document.getElementById(&quot;docker-privesc2&quot;)
 
-            if(width &lt; 1270 &amp;&amp; width &gt; 768) {
+            if(width &lt; 1270 &amp;&amp; width &gt;= 768) {
                 player.setAttribute(&quot;cols&quot;, Math.round(width/1270*80))
             }
-            else {
+            else if(width &lt; 768){
                 player.setAttribute(&quot;cols&quot;, Math.round(width/768*80))
             }
     &lt;/script&gt;    

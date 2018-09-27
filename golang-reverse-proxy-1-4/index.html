@@ -187,10 +187,10 @@
             var width = window.innerWidth
             var player = document.getElementById("player-demo-wget")
 
-            if(width < 1270 && width > 768) {
+            if(width < 1270 && width >= 768) {
                 player.setAttribute("cols", Math.round(width/1270*80))
             }
-            else {
+            else if(width < 768){
                 player.setAttribute("cols", Math.round(width/768*80))
             }
     </script>    
@@ -215,10 +215,10 @@
             var width = window.innerWidth
             var player = document.getElementById("docker-privesc1")
 
-            if(width < 1270 && width > 768) {
+            if(width < 1270 && width >= 768) {
                 player.setAttribute("cols", Math.round(width/1270*80))
             }
-            else {
+            else if(width < 768){
                 player.setAttribute("cols", Math.round(width/768*80))
             }
     </script>    
@@ -235,10 +235,10 @@
             var width = window.innerWidth
             var player = document.getElementById("docker-privesc2")
 
-            if(width < 1270 && width > 768) {
+            if(width < 1270 && width >= 768) {
                 player.setAttribute("cols", Math.round(width/1270*80))
             }
-            else {
+            else if(width < 768){
                 player.setAttribute("cols", Math.round(width/768*80))
             }
     </script>    
