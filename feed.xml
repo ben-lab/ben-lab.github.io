@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>//</link>
     <atom:link href="//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 28 Sep 2018 02:23:47 -0500</pubDate>
-    <lastBuildDate>Fri, 28 Sep 2018 02:23:47 -0500</lastBuildDate>
+    <pubDate>Fri, 28 Sep 2018 06:14:29 -0500</pubDate>
+    <lastBuildDate>Fri, 28 Sep 2018 06:14:29 -0500</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -33,7 +33,7 @@
 
 &lt;details&gt;
     &lt;summary style=&quot;margin-left: 25px&quot; onclick=&quot;javascript:launchOrPausePlayer('player-demo-wget')&quot;&gt;Demo&lt;/summary&gt;
-    &lt;asciinema-player id=&quot;player-demo-wget&quot; src=&quot;/assets/uploads/2018/golang-reverse-proxy-1-4/curl_docker_socket.cast&quot; playing=&quot;false&quot; speed=&quot;2.5&quot; rows=&quot;20&quot; cols=&quot;90&quot;&gt;&lt;/asciinema-player&gt;
+    &lt;asciinema-player id=&quot;player-demo-wget&quot; src=&quot;/assets/uploads/2018/golang-reverse-proxy-1-4/curl_docker_socket.cast&quot; playing=&quot;false&quot; speed=&quot;2.5&quot; idle-time-limit=&quot;0.9&quot; rows=&quot;20&quot; cols=&quot;90&quot;&gt;&lt;/asciinema-player&gt;
     &lt;script&gt;
             var width = window.innerWidth
             var player = document.getElementById(&quot;player-demo-wget&quot;)
@@ -60,7 +60,7 @@
 
 &lt;details&gt;
     &lt;summary style=&quot;&quot; onclick=&quot;javascript:launchOrPausePlayer('docker-privesc1')&quot;&gt;Demo&lt;/summary&gt;
-    &lt;asciinema-player id=&quot;docker-privesc1&quot; src=&quot;/assets/uploads/2018/golang-reverse-proxy-1-4/docker_privesc1.cast&quot; playing=&quot;false&quot; speed=&quot;2&quot; rows=&quot;20&quot; cols=&quot;90&quot;&gt;&lt;/asciinema-player&gt;
+    &lt;asciinema-player id=&quot;docker-privesc1&quot; src=&quot;/assets/uploads/2018/golang-reverse-proxy-1-4/docker_privesc1.cast&quot; playing=&quot;false&quot; speed=&quot;2&quot; idle-time-limit=&quot;0.9&quot; rows=&quot;20&quot; cols=&quot;90&quot;&gt;&lt;/asciinema-player&gt;
     &lt;script&gt;
             var width = window.innerWidth
             var player = document.getElementById(&quot;docker-privesc1&quot;)
@@ -79,7 +79,7 @@
 
 &lt;details&gt;
     &lt;summary style=&quot;&quot; onclick=&quot;javascript:launchOrPausePlayer('docker-privesc2')&quot;&gt;Demo&lt;/summary&gt;
-    &lt;asciinema-player id=&quot;docker-privesc2&quot; src=&quot;/assets/uploads/2018/golang-reverse-proxy-1-4/docker_privesc2.cast&quot; playing=&quot;false&quot; speed=&quot;1.25&quot; rows=&quot;20&quot; cols=&quot;90&quot;&gt;&lt;/asciinema-player&gt;
+    &lt;asciinema-player id=&quot;docker-privesc2&quot; src=&quot;/assets/uploads/2018/golang-reverse-proxy-1-4/docker_privesc2.cast&quot; playing=&quot;false&quot; speed=&quot;1.25&quot; idle-time-limit=&quot;0.9&quot; rows=&quot;20&quot; cols=&quot;90&quot;&gt;&lt;/asciinema-player&gt;
     &lt;script&gt;
             var width = window.innerWidth
             var player = document.getElementById(&quot;docker-privesc2&quot;)
