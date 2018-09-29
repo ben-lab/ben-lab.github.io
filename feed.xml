@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>//</link>
     <atom:link href="//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sat, 29 Sep 2018 13:24:28 -0500</pubDate>
-    <lastBuildDate>Sat, 29 Sep 2018 13:24:28 -0500</lastBuildDate>
+    <pubDate>Sat, 29 Sep 2018 13:29:39 -0500</pubDate>
+    <lastBuildDate>Sat, 29 Sep 2018 13:29:39 -0500</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -47,8 +47,6 @@
     &lt;/script&gt;
 &lt;/details&gt;
 &lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;Obviously, you can also install the Docker cli for a user experience identical to the one you have on the host.&lt;/p&gt;
 
 &lt;p&gt;In my case, I’m running my containers on a small dedicated server using Docker compose. Mainly to perform per commit build jobs on a couple of open-source projects I follow. So DinD doesn’t seems like a good option.&lt;/p&gt;
 
