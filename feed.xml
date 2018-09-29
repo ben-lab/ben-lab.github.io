@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>//</link>
     <atom:link href="//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 28 Sep 2018 06:14:29 -0500</pubDate>
-    <lastBuildDate>Fri, 28 Sep 2018 06:14:29 -0500</lastBuildDate>
+    <pubDate>Sat, 29 Sep 2018 13:22:23 -0500</pubDate>
+    <lastBuildDate>Sat, 29 Sep 2018 13:22:23 -0500</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -21,11 +21,11 @@
     &lt;p&gt;&lt;strong&gt;Docker inside Docker (DinD) :&lt;/strong&gt; you perform a full Docker installation within you container. Basically, you run Docker on top of another Docker. I’m not a big fan of this approach and some people much more knowledgeable than me have explained &lt;a href=&quot;https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/&quot;&gt;why it might be a bad idea&lt;/a&gt; (spoiler: filesystem issues and risks of corruption). This options however seems to remain relevant in some cases, for instance if you are using &lt;a href=&quot;https://applatix.com/case-docker-docker-kubernetes-part/&quot;&gt;Kubernetes&lt;/a&gt;.&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Docker outside Docker (DooD) :&lt;/strong&gt; you share the Docker socket of the host with your hosted container using the &lt;code class=&quot;highlighter-rouge&quot;&gt;--volume&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;-v&lt;/code&gt; flags :&lt;/p&gt;
+    &lt;p&gt;&lt;strong&gt;Docker outside Docker (DooD) :&lt;/strong&gt; you share the Docker daemon socket of the host with your hosted container using the &lt;code class=&quot;highlighter-rouge&quot;&gt;--volume&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;-v&lt;/code&gt; flags :&lt;/p&gt;
 
     &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock alpine&lt;/code&gt;&lt;/p&gt;
 
-    &lt;p&gt;Once inside the container, performing a request to the docker socket become as simple as installing &lt;code class=&quot;highlighter-rouge&quot;&gt;curl&lt;/code&gt; and doing :&lt;/p&gt;
+    &lt;p&gt;Once inside the container, performing a request to the Docker API become as simple as installing &lt;code class=&quot;highlighter-rouge&quot;&gt;curl&lt;/code&gt; and doing :&lt;/p&gt;
 
     &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;curl --unix-socket /var/run/docker.sock http://localhost/containers/json&lt;/code&gt;&lt;/p&gt;
   &lt;/li&gt;
@@ -52,9 +52,11 @@
 
 &lt;p&gt;In my case, I’m running my containers on a small dedicated server using Docker compose. Mainly to perform per commit build jobs on a couple of open-source projects I follow. So DinD doesn’t seems like a good option.&lt;/p&gt;
 
-&lt;p&gt;This left us with the DooD approach. However, as a former “offensive security” guy, I can’t accept to break the isolation between my containers and my host so easily. Indeed, in case of compromising of the container with access to the Docker socket, getting root access on the host can be easily achieved.&lt;/p&gt;
+&lt;h2 id=&quot;privilege-escalation-using-the-docker-daemon-socket&quot;&gt;Privilege escalation using the Docker daemon socket&lt;/h2&gt;
 
-&lt;p&gt;All  an attacker would have to do is to download the standalone &lt;a href=&quot;https://download.docker.com/linux/static/stable/x86_64/&quot;&gt;docker client&lt;/a&gt;, launch a new busybox container (running by default as root) mapping the root of the host to a directory, and then chroot into it :&lt;/p&gt;
+&lt;p&gt;This left us with the DooD approach. However, as a former “offensive security” guy, I can’t accept to break the isolation between my containers and my host so easily. Indeed, as stated by the Docker documentation : &lt;em&gt;“Docker’s out-of-the-box authorization model is all or nothing. Any user with permission to access the Docker daemon can run any Docker client command. The same is true for callers using Docker’s Engine API to contact the daemon.”&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Which mean that in case of compromising of a container with access to the Docker socket, getting root access on the host can be easily achieved. All  an attacker would have to do is to download the standalone &lt;a href=&quot;https://download.docker.com/linux/static/stable/x86_64/&quot;&gt;docker client&lt;/a&gt;, launch a new busybox container mounting the root of the host to a directory, and then chroot into it :&lt;/p&gt;
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;docker run -u 0 -ti --rm -v /:/media/host/ busybox chroot /media/host&lt;/code&gt;&lt;/p&gt;
 
@@ -75,7 +77,7 @@
 &lt;/details&gt;
 &lt;p&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;em&gt;Note : This is the exact same reason why it is considered that being in the docker group is equal to have root privilege. It works from the host too :&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Note : This is the exact same reason why being in the docker group is considered equal having root privilege. It works from the host too :&lt;/em&gt;&lt;/p&gt;
 
 &lt;details&gt;
     &lt;summary style=&quot;&quot; onclick=&quot;javascript:launchOrPausePlayer('docker-privesc2')&quot;&gt;Demo&lt;/summary&gt;
@@ -94,29 +96,41 @@
 &lt;/details&gt;
 &lt;p&gt;&lt;/p&gt;
 
+&lt;h2 id=&quot;dockers-built-in-hardening-options&quot;&gt;Docker’s built-in hardening options&lt;/h2&gt;
+
+&lt;p&gt;Docker allow to protect the daemon socket using :&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Mutual &lt;a href=&quot;https://docs.docker.com/engine/security/https/&quot;&gt;client-server authentication&lt;/a&gt; through TLS and x509.&lt;/li&gt;
+  &lt;li&gt;The Docker Engine &lt;a href=&quot;https://docs.docker.com/engine/extend/&quot;&gt;managed plugin system&lt;/a&gt;, allowing to &lt;a href=&quot;https://docs.docker.com/engine/extend/plugins_authorization/&quot;&gt;create an authorization plugin&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Regarding the first point, it’s a great feature. However, if a container with access to the Docker socket is compromised, the attacker will also most likely have access to the client certificate. In such case, the scenario presented previously is still relevant.&lt;/p&gt;
+
+&lt;p&gt;Regarding the second point, no official authorization plugin is provided. &lt;a href=&quot;https://www.google.com/search?q=docker+authorization+plugin&quot;&gt;Multiple implementation exist&lt;/a&gt;, more or less functional and more or less maintained. I’m not a big fan of Docker plugins, since they are a bit anti-idiomatic with the “Build Once, Deploy Anywhere” philosophy.&lt;/p&gt;
+
 &lt;h2 id=&quot;securing-the-docker-socket-using-nginx-&quot;&gt;Securing the Docker socket using Nginx ?&lt;/h2&gt;
 
-&lt;p&gt;When I saw that the Docker socket gave access to a Web API, my first though was “reverse-proxy”. If you are not familiar with this concept, a reverse-proxy stand between a web server and its clients and forward their requests to it. A reverse-proxy also allow to perform different tasks such as caching, load-balancing and… requests filtering ! To solve our issue, we can map our docker socket to a reverse-proxy container, configure our docker client to work with a remote socket and filter its HTTP requests to only allow what we want.&lt;/p&gt;
+&lt;p&gt;When I saw that the Docker socket give access to a Web API, my first though was “reverse-proxy”. If you are not familiar with this concept, a reverse-proxy stand between a web server and its clients and forward their requests to it. A reverse-proxy also allows to perform different tasks such as caching, load-balancing and… requests filtering ! To solve our issue, we can mount our Docker socket into a revers-proxy container, configure our Docker client to work with a remote socket and filter its HTTP requests to the API to only allow what we want.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;assets/uploads/2018/golang-reverse-proxy-1-4/schema-reverse-proxy.jpg&quot; alt=&quot;Static Library Link&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;One of the most commonly used reverse proxy is Nginx, which happens to have a ready to use official image on &lt;a href=&quot;https://hub.docker.com/_/nginx/&quot;&gt;Dockerhub&lt;/a&gt;. Neat right ? No.&lt;/p&gt;
 
-&lt;p&gt;By doing so, we basically move our risk of compromising from the Jenkins container to the Nginx one. The attack surface is reduced (since Jenkins is &lt;a href=&quot;https://www.cvedetails.com/product/34004/Jenkins-Jenkins.html?vendor_id=15865&quot;&gt;not realy&lt;/a&gt; the most secure software ever), but we still end-up with a full-sized docker container, either based on &lt;a href=&quot;https://justi.cz/security/2018/09/13/alpine-apk-rce.html&quot;&gt;alpine&lt;/a&gt; or &lt;a href=&quot;http://dance.csc.ncsu.edu/papers/codaspy17.pdf&quot;&gt;debian&lt;/a&gt;, running a service with much more features than actually needed.&lt;/p&gt;
+&lt;p&gt;By doing so, we basically move our risk of compromising from the Jenkins container to the Nginx one. The attack surface is reduced (since Jenkins is &lt;a href=&quot;https://www.cvedetails.com/product/34004/Jenkins-Jenkins.html?vendor_id=15865&quot;&gt;not really&lt;/a&gt; the most secure software ever), but we still end-up with a full-sized Docker container, either based on &lt;a href=&quot;https://justi.cz/security/2018/09/13/alpine-apk-rce.html&quot;&gt;alpine&lt;/a&gt; or &lt;a href=&quot;http://dance.csc.ncsu.edu/papers/codaspy17.pdf&quot;&gt;debian&lt;/a&gt;, running a service with much more features than actually needed.&lt;/p&gt;
 
 &lt;p&gt;In some (most ?) cases it may seems like an acceptable solution, but let’s get paranoid and see how we can do it better.&lt;/p&gt;
 
 &lt;h2 id=&quot;scratch-images-and-golang-to-the-rescue&quot;&gt;Scratch images and Golang to the rescue&lt;/h2&gt;
 
-&lt;p&gt;A neat way to have an as empty as possible docker image is to build it “FROM scratch”, which basicaly means that your image will &lt;a href=&quot;https://embano1.github.io/post/scratch/&quot;&gt;“only”&lt;/a&gt; contains what you put in it. No &lt;code class=&quot;highlighter-rouge&quot;&gt;sh&lt;/code&gt;, no &lt;code class=&quot;highlighter-rouge&quot;&gt;/bin&lt;/code&gt;, no &lt;code class=&quot;highlighter-rouge&quot;&gt;/lib&lt;/code&gt;, no &lt;code class=&quot;highlighter-rouge&quot;&gt;thing&lt;/code&gt;. The first question that should come up to your mind is : &lt;em&gt;What about dependencies ?&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;A neat way to have an as empty as possible Docker image is to build it “FROM scratch”, which basically means that your image will &lt;a href=&quot;https://embano1.github.io/post/scratch/&quot;&gt;“only”&lt;/a&gt; contains what you put in it. No &lt;code class=&quot;highlighter-rouge&quot;&gt;sh&lt;/code&gt;, no &lt;code class=&quot;highlighter-rouge&quot;&gt;/bin&lt;/code&gt;, no &lt;code class=&quot;highlighter-rouge&quot;&gt;/lib&lt;/code&gt;, no &lt;code class=&quot;highlighter-rouge&quot;&gt;thing&lt;/code&gt;. The first question that should come up to your mind is : &lt;em&gt;What about dependencies ?&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;If you are coding in Java you need the JVM, if you are coding in Python you need the Python interpreter and if you are coding in C/C++ you have to wear your original &lt;em&gt;Jurassic Park&lt;/em&gt; t-shirt and code with &lt;em&gt;Stranger Things&lt;/em&gt; in the background for maximum efficiency. We don’t want that.&lt;/p&gt;
+&lt;p&gt;If you are coding in Java you need the JVM, if you are coding in Python you need the Python interpreter and if you are coding in C/C++ you have to wear your original &lt;em&gt;Jurassic Park&lt;/em&gt; t-shirt, and code with &lt;em&gt;Stranger Things&lt;/em&gt; in the background for maximum efficiency. We don’t want that.&lt;/p&gt;
 
 &lt;p&gt;Luckily, Golang is a language offering just the level of abstraction we need to code a reverse-proxy painlessly while offering all the capabilities of a compiled language, including &lt;strong&gt;static compilation&lt;/strong&gt;.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;assets/uploads/2018/golang-reverse-proxy-1-4/StaticLibraryLink.png&quot; alt=&quot;Static Library Link&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Static compilation is a compilation process resulting in a standalone binary embeding all its dependencies. For instance, a software developed in C and statically compiled won’t rely on the system &lt;code class=&quot;highlighter-rouge&quot;&gt;libc&lt;/code&gt; but the one it as been compiled with. The same thing can easily be achieved in Go :&lt;/p&gt;
+&lt;p&gt;Static compilation is a compilation process resulting in a standalone binary embedding all its dependencies. For instance, a software developed in C and statically compiled won’t rely on the system &lt;code class=&quot;highlighter-rouge&quot;&gt;libc&lt;/code&gt; but the one it as been compiled with. The same thing can easily be achieved in Go :&lt;/p&gt;
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags &quot;-static&quot;' src/reverse-proxy.go&lt;/code&gt;&lt;/p&gt;
 
@@ -129,11 +143,11 @@
   &lt;li&gt;Add HTTPS support, client authentication and per client filtering policies&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;Each of those points will be the subject of dedicated blog posts in this serie.&lt;/p&gt;
+&lt;p&gt;Each of those points will be the subject of dedicated blog posts in this series.&lt;/p&gt;
 
 &lt;h2 id=&quot;alternative-solutions&quot;&gt;Alternative solutions&lt;/h2&gt;
 
-&lt;p&gt;If you are looking for a production ready solution and are not realy interested by the DIY part, you may want to have a look at :&lt;/p&gt;
+&lt;p&gt;If you are looking for a production ready solution and are not really interested by the DIY part, you may want to have a look at :&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;&lt;a href=&quot;https://github.com/open-policy-agent/opa&quot;&gt;Open Policy Agent&lt;/a&gt;, a general-purpose policy engine which happens to have a tutorial for &lt;a href=&quot;https://www.openpolicyagent.org/docs/docker-authorization.html&quot;&gt;this exact use case&lt;/a&gt;. However it requires to install a Docker plugin and doesn’t offer actual client authentication.&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://github.com/TykTechnologies/tyk&quot;&gt;Tyk&lt;/a&gt;, a lightweight API Gateway coded in Go, offering filtering capabilities. However, it doesn’t seem to filter parameters.&lt;/li&gt;

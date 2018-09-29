@@ -170,11 +170,11 @@
     <p><strong>Docker inside Docker (DinD) :</strong> you perform a full Docker installation within you container. Basically, you run Docker on top of another Docker. I’m not a big fan of this approach and some people much more knowledgeable than me have explained <a href="https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/">why it might be a bad idea</a> (spoiler: filesystem issues and risks of corruption). This options however seems to remain relevant in some cases, for instance if you are using <a href="https://applatix.com/case-docker-docker-kubernetes-part/">Kubernetes</a>.</p>
   </li>
   <li>
-    <p><strong>Docker outside Docker (DooD) :</strong> you share the Docker socket of the host with your hosted container using the <code class="highlighter-rouge">--volume</code> or <code class="highlighter-rouge">-v</code> flags :</p>
+    <p><strong>Docker outside Docker (DooD) :</strong> you share the Docker daemon socket of the host with your hosted container using the <code class="highlighter-rouge">--volume</code> or <code class="highlighter-rouge">-v</code> flags :</p>
 
     <p><code class="highlighter-rouge">docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock alpine</code></p>
 
-    <p>Once inside the container, performing a request to the docker socket become as simple as installing <code class="highlighter-rouge">curl</code> and doing :</p>
+    <p>Once inside the container, performing a request to the Docker API become as simple as installing <code class="highlighter-rouge">curl</code> and doing :</p>
 
     <p><code class="highlighter-rouge">curl --unix-socket /var/run/docker.sock http://localhost/containers/json</code></p>
   </li>
@@ -201,9 +201,11 @@
 
 <p>In my case, I’m running my containers on a small dedicated server using Docker compose. Mainly to perform per commit build jobs on a couple of open-source projects I follow. So DinD doesn’t seems like a good option.</p>
 
-<p>This left us with the DooD approach. However, as a former “offensive security” guy, I can’t accept to break the isolation between my containers and my host so easily. Indeed, in case of compromising of the container with access to the Docker socket, getting root access on the host can be easily achieved.</p>
+<h2 id="privilege-escalation-using-the-docker-daemon-socket">Privilege escalation using the Docker daemon socket</h2>
 
-<p>All  an attacker would have to do is to download the standalone <a href="https://download.docker.com/linux/static/stable/x86_64/">docker client</a>, launch a new busybox container (running by default as root) mapping the root of the host to a directory, and then chroot into it :</p>
+<p>This left us with the DooD approach. However, as a former “offensive security” guy, I can’t accept to break the isolation between my containers and my host so easily. Indeed, as stated by the Docker documentation : <em>“Docker’s out-of-the-box authorization model is all or nothing. Any user with permission to access the Docker daemon can run any Docker client command. The same is true for callers using Docker’s Engine API to contact the daemon.”</em></p>
+
+<p>Which mean that in case of compromising of a container with access to the Docker socket, getting root access on the host can be easily achieved. All  an attacker would have to do is to download the standalone <a href="https://download.docker.com/linux/static/stable/x86_64/">docker client</a>, launch a new busybox container mounting the root of the host to a directory, and then chroot into it :</p>
 
 <p><code class="highlighter-rouge">docker run -u 0 -ti --rm -v /:/media/host/ busybox chroot /media/host</code></p>
 
@@ -224,7 +226,7 @@
 </details>
 <p></p>
 
-<p><em>Note : This is the exact same reason why it is considered that being in the docker group is equal to have root privilege. It works from the host too :</em></p>
+<p><em>Note : This is the exact same reason why being in the docker group is considered equal having root privilege. It works from the host too :</em></p>
 
 <details>
     <summary style="" onclick="javascript:launchOrPausePlayer('docker-privesc2')">Demo</summary>
@@ -243,29 +245,41 @@
 </details>
 <p></p>
 
+<h2 id="dockers-built-in-hardening-options">Docker’s built-in hardening options</h2>
+
+<p>Docker allow to protect the daemon socket using :</p>
+<ol>
+  <li>Mutual <a href="https://docs.docker.com/engine/security/https/">client-server authentication</a> through TLS and x509.</li>
+  <li>The Docker Engine <a href="https://docs.docker.com/engine/extend/">managed plugin system</a>, allowing to <a href="https://docs.docker.com/engine/extend/plugins_authorization/">create an authorization plugin</a>.</li>
+</ol>
+
+<p>Regarding the first point, it’s a great feature. However, if a container with access to the Docker socket is compromised, the attacker will also most likely have access to the client certificate. In such case, the scenario presented previously is still relevant.</p>
+
+<p>Regarding the second point, no official authorization plugin is provided. <a href="https://www.google.com/search?q=docker+authorization+plugin">Multiple implementation exist</a>, more or less functional and more or less maintained. I’m not a big fan of Docker plugins, since they are a bit anti-idiomatic with the “Build Once, Deploy Anywhere” philosophy.</p>
+
 <h2 id="securing-the-docker-socket-using-nginx-">Securing the Docker socket using Nginx ?</h2>
 
-<p>When I saw that the Docker socket gave access to a Web API, my first though was “reverse-proxy”. If you are not familiar with this concept, a reverse-proxy stand between a web server and its clients and forward their requests to it. A reverse-proxy also allow to perform different tasks such as caching, load-balancing and… requests filtering ! To solve our issue, we can map our docker socket to a reverse-proxy container, configure our docker client to work with a remote socket and filter its HTTP requests to only allow what we want.</p>
+<p>When I saw that the Docker socket give access to a Web API, my first though was “reverse-proxy”. If you are not familiar with this concept, a reverse-proxy stand between a web server and its clients and forward their requests to it. A reverse-proxy also allows to perform different tasks such as caching, load-balancing and… requests filtering ! To solve our issue, we can mount our Docker socket into a revers-proxy container, configure our Docker client to work with a remote socket and filter its HTTP requests to the API to only allow what we want.</p>
 
 <p><img src="assets/uploads/2018/golang-reverse-proxy-1-4/schema-reverse-proxy.jpg" alt="Static Library Link" /></p>
 
 <p>One of the most commonly used reverse proxy is Nginx, which happens to have a ready to use official image on <a href="https://hub.docker.com/_/nginx/">Dockerhub</a>. Neat right ? No.</p>
 
-<p>By doing so, we basically move our risk of compromising from the Jenkins container to the Nginx one. The attack surface is reduced (since Jenkins is <a href="https://www.cvedetails.com/product/34004/Jenkins-Jenkins.html?vendor_id=15865">not realy</a> the most secure software ever), but we still end-up with a full-sized docker container, either based on <a href="https://justi.cz/security/2018/09/13/alpine-apk-rce.html">alpine</a> or <a href="http://dance.csc.ncsu.edu/papers/codaspy17.pdf">debian</a>, running a service with much more features than actually needed.</p>
+<p>By doing so, we basically move our risk of compromising from the Jenkins container to the Nginx one. The attack surface is reduced (since Jenkins is <a href="https://www.cvedetails.com/product/34004/Jenkins-Jenkins.html?vendor_id=15865">not really</a> the most secure software ever), but we still end-up with a full-sized Docker container, either based on <a href="https://justi.cz/security/2018/09/13/alpine-apk-rce.html">alpine</a> or <a href="http://dance.csc.ncsu.edu/papers/codaspy17.pdf">debian</a>, running a service with much more features than actually needed.</p>
 
 <p>In some (most ?) cases it may seems like an acceptable solution, but let’s get paranoid and see how we can do it better.</p>
 
 <h2 id="scratch-images-and-golang-to-the-rescue">Scratch images and Golang to the rescue</h2>
 
-<p>A neat way to have an as empty as possible docker image is to build it “FROM scratch”, which basicaly means that your image will <a href="https://embano1.github.io/post/scratch/">“only”</a> contains what you put in it. No <code class="highlighter-rouge">sh</code>, no <code class="highlighter-rouge">/bin</code>, no <code class="highlighter-rouge">/lib</code>, no <code class="highlighter-rouge">thing</code>. The first question that should come up to your mind is : <em>What about dependencies ?</em></p>
+<p>A neat way to have an as empty as possible Docker image is to build it “FROM scratch”, which basically means that your image will <a href="https://embano1.github.io/post/scratch/">“only”</a> contains what you put in it. No <code class="highlighter-rouge">sh</code>, no <code class="highlighter-rouge">/bin</code>, no <code class="highlighter-rouge">/lib</code>, no <code class="highlighter-rouge">thing</code>. The first question that should come up to your mind is : <em>What about dependencies ?</em></p>
 
-<p>If you are coding in Java you need the JVM, if you are coding in Python you need the Python interpreter and if you are coding in C/C++ you have to wear your original <em>Jurassic Park</em> t-shirt and code with <em>Stranger Things</em> in the background for maximum efficiency. We don’t want that.</p>
+<p>If you are coding in Java you need the JVM, if you are coding in Python you need the Python interpreter and if you are coding in C/C++ you have to wear your original <em>Jurassic Park</em> t-shirt, and code with <em>Stranger Things</em> in the background for maximum efficiency. We don’t want that.</p>
 
 <p>Luckily, Golang is a language offering just the level of abstraction we need to code a reverse-proxy painlessly while offering all the capabilities of a compiled language, including <strong>static compilation</strong>.</p>
 
 <p><img src="assets/uploads/2018/golang-reverse-proxy-1-4/StaticLibraryLink.png" alt="Static Library Link" /></p>
 
-<p>Static compilation is a compilation process resulting in a standalone binary embeding all its dependencies. For instance, a software developed in C and statically compiled won’t rely on the system <code class="highlighter-rouge">libc</code> but the one it as been compiled with. The same thing can easily be achieved in Go :</p>
+<p>Static compilation is a compilation process resulting in a standalone binary embedding all its dependencies. For instance, a software developed in C and statically compiled won’t rely on the system <code class="highlighter-rouge">libc</code> but the one it as been compiled with. The same thing can easily be achieved in Go :</p>
 
 <p><code class="highlighter-rouge">CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' src/reverse-proxy.go</code></p>
 
@@ -278,11 +292,11 @@
   <li>Add HTTPS support, client authentication and per client filtering policies</li>
 </ol>
 
-<p>Each of those points will be the subject of dedicated blog posts in this serie.</p>
+<p>Each of those points will be the subject of dedicated blog posts in this series.</p>
 
 <h2 id="alternative-solutions">Alternative solutions</h2>
 
-<p>If you are looking for a production ready solution and are not realy interested by the DIY part, you may want to have a look at :</p>
+<p>If you are looking for a production ready solution and are not really interested by the DIY part, you may want to have a look at :</p>
 <ul>
   <li><a href="https://github.com/open-policy-agent/opa">Open Policy Agent</a>, a general-purpose policy engine which happens to have a tutorial for <a href="https://www.openpolicyagent.org/docs/docker-authorization.html">this exact use case</a>. However it requires to install a Docker plugin and doesn’t offer actual client authentication.</li>
   <li><a href="https://github.com/TykTechnologies/tyk">Tyk</a>, a lightweight API Gateway coded in Go, offering filtering capabilities. However, it doesn’t seem to filter parameters.</li>
