@@ -201,7 +201,7 @@
 
 <p>In my case, I’m running my containers on a small dedicated server using Docker compose. Mainly to perform per commit build jobs on a couple of open-source projects I follow. So DinD doesn’t seems like a good option.</p>
 
-<h2 id="privilege-escalation-using-the-docker-daemon-socket">Privilege escalation using the Docker daemon socket</h2>
+<h2 id="container-escape-using-the-docker-daemon-socket">Container escape using the Docker daemon socket</h2>
 
 <p>This left us with the DooD approach. However, as a former “offensive security” guy, I can’t accept to break the isolation between my containers and my host so easily. Indeed, as stated by the Docker documentation : <em>“Docker’s out-of-the-box authorization model is all or nothing. Any user with permission to access the Docker daemon can run any Docker client command. The same is true for callers using Docker’s Engine API to contact the daemon.”</em></p>
 

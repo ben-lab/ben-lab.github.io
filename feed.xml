@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>//</link>
     <atom:link href="//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sat, 29 Sep 2018 13:22:23 -0500</pubDate>
-    <lastBuildDate>Sat, 29 Sep 2018 13:22:23 -0500</lastBuildDate>
+    <pubDate>Sat, 29 Sep 2018 13:24:28 -0500</pubDate>
+    <lastBuildDate>Sat, 29 Sep 2018 13:24:28 -0500</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -52,7 +52,7 @@
 
 &lt;p&gt;In my case, I’m running my containers on a small dedicated server using Docker compose. Mainly to perform per commit build jobs on a couple of open-source projects I follow. So DinD doesn’t seems like a good option.&lt;/p&gt;
 
-&lt;h2 id=&quot;privilege-escalation-using-the-docker-daemon-socket&quot;&gt;Privilege escalation using the Docker daemon socket&lt;/h2&gt;
+&lt;h2 id=&quot;container-escape-using-the-docker-daemon-socket&quot;&gt;Container escape using the Docker daemon socket&lt;/h2&gt;
 
 &lt;p&gt;This left us with the DooD approach. However, as a former “offensive security” guy, I can’t accept to break the isolation between my containers and my host so easily. Indeed, as stated by the Docker documentation : &lt;em&gt;“Docker’s out-of-the-box authorization model is all or nothing. Any user with permission to access the Docker daemon can run any Docker client command. The same is true for callers using Docker’s Engine API to contact the daemon.”&lt;/em&gt;&lt;/p&gt;
 
