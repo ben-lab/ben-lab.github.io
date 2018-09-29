@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>//</link>
     <atom:link href="//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sat, 29 Sep 2018 13:29:39 -0500</pubDate>
-    <lastBuildDate>Sat, 29 Sep 2018 13:29:39 -0500</lastBuildDate>
+    <pubDate>Sat, 29 Sep 2018 16:07:31 -0500</pubDate>
+    <lastBuildDate>Sat, 29 Sep 2018 16:07:31 -0500</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -122,7 +122,7 @@
 
 &lt;p&gt;A neat way to have an as empty as possible Docker image is to build it “FROM scratch”, which basically means that your image will &lt;a href=&quot;https://embano1.github.io/post/scratch/&quot;&gt;“only”&lt;/a&gt; contains what you put in it. No &lt;code class=&quot;highlighter-rouge&quot;&gt;sh&lt;/code&gt;, no &lt;code class=&quot;highlighter-rouge&quot;&gt;/bin&lt;/code&gt;, no &lt;code class=&quot;highlighter-rouge&quot;&gt;/lib&lt;/code&gt;, no &lt;code class=&quot;highlighter-rouge&quot;&gt;thing&lt;/code&gt;. The first question that should come up to your mind is : &lt;em&gt;What about dependencies ?&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;If you are coding in Java you need the JVM, if you are coding in Python you need the Python interpreter and if you are coding in C/C++ you have to wear your original &lt;em&gt;Jurassic Park&lt;/em&gt; t-shirt, and code with &lt;em&gt;Stranger Things&lt;/em&gt; in the background for maximum efficiency. We don’t want that.&lt;/p&gt;
+&lt;p&gt;If you are coding in Java you need the JVM, if you are coding in Python you need the Python interpreter, and if you are coding in C/C++ you need your original &lt;em&gt;Jurassic Park&lt;/em&gt; t-shirt and &lt;em&gt;Stranger Things&lt;/em&gt; in the background for maximum efficiency. We don’t want that.&lt;/p&gt;
 
 &lt;p&gt;Luckily, Golang is a language offering just the level of abstraction we need to code a reverse-proxy painlessly while offering all the capabilities of a compiled language, including &lt;strong&gt;static compilation&lt;/strong&gt;.&lt;/p&gt;
 
