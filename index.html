@@ -262,7 +262,7 @@
 
 <p>When I saw that the Docker socket give access to a Web API, my first though was “reverse-proxy”. If you are not familiar with this concept, a reverse-proxy stand between a web server and its clients and forward their requests to it. A reverse-proxy also allows to perform different tasks such as caching, load-balancing and… requests filtering ! To solve our issue, we can mount our Docker socket into a revers-proxy container, configure our Docker client to work with a remote socket and filter its HTTP requests to the API to only allow what we want.</p>
 
-<p><img src="assets/uploads/2018/golang-reverse-proxy-1-4/schema-reverse-proxy.jpg" alt="Static Library Link" /></p>
+<p><img src="/assets/uploads/2018/golang-reverse-proxy-1-4/schema-reverse-proxy.jpg" alt="Static Library Link" /></p>
 
 <p>One of the most commonly used reverse proxy is Nginx, which happens to have a ready to use official image on <a href="https://hub.docker.com/_/nginx/">Dockerhub</a>. Neat right ? No.</p>
 
@@ -278,7 +278,7 @@
 
 <p>Luckily, Golang is a language offering just the level of abstraction we need to code a reverse-proxy painlessly while offering all the capabilities of a compiled language, including <strong>static compilation</strong>.</p>
 
-<p><img src="assets/uploads/2018/golang-reverse-proxy-1-4/StaticLibraryLink.png" alt="Static Library Link" /></p>
+<p><img src="/assets/uploads/2018/golang-reverse-proxy-1-4/StaticLibraryLink.png" alt="Static Library Link" /></p>
 
 <p>Static compilation is a compilation process resulting in a standalone binary embedding all its dependencies. For instance, a software developed in C and statically compiled won’t rely on the system <code class="highlighter-rouge">libc</code> but the one it as been compiled with. The same thing can easily be achieved in Go :</p>
 
