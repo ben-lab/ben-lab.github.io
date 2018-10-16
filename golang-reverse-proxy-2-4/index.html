@@ -228,11 +228,11 @@ Futhermore, the use of a basic http server allows to act as a transparent revers
 </span></code></pre></div></div>
 
 <ol>
-  <li>We create a new <a href="https://godoc.org/github.com/tv42/httpunix">httpunix</a> <code class="highlighter-rouge">Transport</code> instance which will be used to request the socket.</li>
-  <li>We indicate that requests to the hostname <code class="highlighter-rouge">docker-socket</code> actually target the docker unix socket.</li>
+  <li>Create a new <a href="https://godoc.org/github.com/tv42/httpunix">httpunix</a> <code class="highlighter-rouge">Transport</code> instance which will be used to request the socket.</li>
+  <li>Indicate that requests to the hostname <code class="highlighter-rouge">docker-socket</code> actually target the docker unix socket.</li>
   <li>The client request’s <code class="highlighter-rouge">Sheme</code> value is <code class="highlighter-rouge">http</code>. Since we redirect it to a unix socket, we have to change it to <code class="highlighter-rouge">http+unix</code>.</li>
-  <li>We force the targeted hostname to <code class="highlighter-rouge">docker-socket</code> in the client’s request. This allow us to have any hostname value for our running container. Also, we don’t offer actual proxy capabilities and alway want to redirect to the docker socket.</li>
-  <li>We forward the modified client request to the docker socket.</li>
+  <li>Force the targeted hostname to <code class="highlighter-rouge">docker-socket</code> in the client’s request. This allow us to have any hostname value for our running container. Also, we don’t offer actual proxy capabilities and alway want to redirect to the docker socket.</li>
+  <li>Forward the modified client request to the docker socket.</li>
   <li>If the request fail, we send a standard <code class="highlighter-rouge">Status Service Unavailable</code> error to the client.</li>
   <li>Else, we forward the answer of the docker API to the client.</li>
 </ol>
@@ -254,12 +254,12 @@ Futhermore, the use of a basic http server allows to act as a transparent revers
 </code></pre></div></div>
 
 <ol>
-  <li>We move the source code to the container.</li>
-  <li>We get required Go dependencies.</li>
-  <li>We compile our source code.</li>
-  <li>We move the output to <code class="highlighter-rouge">/bin</code>.</li>
-  <li>We set the user as root (required to access the docker-socket).</li>
-  <li>We define <code class="highlighter-rouge">/bin/reverse-proxy</code> as the entry point.</li>
+  <li>Move the source code to the container.</li>
+  <li>Get required Go dependencies.</li>
+  <li>Compile our source code.</li>
+  <li>Move the output to <code class="highlighter-rouge">/bin</code>.</li>
+  <li>Set the user as root (required to access the docker-socket).</li>
+  <li>Define <code class="highlighter-rouge">/bin/reverse-proxy</code> as the entry point.</li>
 </ol>
 
 <p>Nothing too fancy or difficult here. However, <a href="/golang-reverse-proxy-1-4/#securing-the-docker-socket-using-nginx-">security concerns</a> aside, do we really want a container with a <a href="https://hub.docker.com/r/library/golang/tags/">295MB</a> base image ? Probably not. Thanks to the use of a <a href="https://docs.docker.com/develop/develop-images/multistage-build/">multi-stage builds</a> Dockerfile, we can build our reverse proxy <a href="/golang-reverse-proxy-1-4/#scratch-images-and-golang-to-the-rescue">statically</a> and add the resulting binary in an empty container.</p>
@@ -277,9 +277,9 @@ Futhermore, the use of a basic http server allows to act as a transparent revers
 
 <p>Our key additions :</p>
 <ol>
-  <li>We define the golang container as a build step named <code class="highlighter-rouge">build</code>.</li>
-  <li>We compile the binary statically.</li>
-  <li>We move the compiled binary from our <code class="highlighter-rouge">build</code> container to the scratch container.</li>
+  <li>Define the golang container as a build step named <code class="highlighter-rouge">build</code>.</li>
+  <li>Compile the binary statically.</li>
+  <li>Move the compiled binary from our <code class="highlighter-rouge">build</code> container to the scratch container.</li>
 </ol>
 
 <p>The result is a container with a size of 6.5MB and an as small as possible attack surface.</p>

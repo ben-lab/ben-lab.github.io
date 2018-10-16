@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>//</link>
     <atom:link href="//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 16 Oct 2018 09:41:00 -0500</pubDate>
-    <lastBuildDate>Tue, 16 Oct 2018 09:41:00 -0500</lastBuildDate>
+    <pubDate>Tue, 16 Oct 2018 10:02:28 -0500</pubDate>
+    <lastBuildDate>Tue, 16 Oct 2018 10:02:28 -0500</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -79,11 +79,11 @@ Futhermore, the use of a basic http server allows to act as a transparent revers
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;ol&gt;
-  &lt;li&gt;We create a new &lt;a href=&quot;https://godoc.org/github.com/tv42/httpunix&quot;&gt;httpunix&lt;/a&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;Transport&lt;/code&gt; instance which will be used to request the socket.&lt;/li&gt;
-  &lt;li&gt;We indicate that requests to the hostname &lt;code class=&quot;highlighter-rouge&quot;&gt;docker-socket&lt;/code&gt; actually target the docker unix socket.&lt;/li&gt;
+  &lt;li&gt;Create a new &lt;a href=&quot;https://godoc.org/github.com/tv42/httpunix&quot;&gt;httpunix&lt;/a&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;Transport&lt;/code&gt; instance which will be used to request the socket.&lt;/li&gt;
+  &lt;li&gt;Indicate that requests to the hostname &lt;code class=&quot;highlighter-rouge&quot;&gt;docker-socket&lt;/code&gt; actually target the docker unix socket.&lt;/li&gt;
   &lt;li&gt;The client request’s &lt;code class=&quot;highlighter-rouge&quot;&gt;Sheme&lt;/code&gt; value is &lt;code class=&quot;highlighter-rouge&quot;&gt;http&lt;/code&gt;. Since we redirect it to a unix socket, we have to change it to &lt;code class=&quot;highlighter-rouge&quot;&gt;http+unix&lt;/code&gt;.&lt;/li&gt;
-  &lt;li&gt;We force the targeted hostname to &lt;code class=&quot;highlighter-rouge&quot;&gt;docker-socket&lt;/code&gt; in the client’s request. This allow us to have any hostname value for our running container. Also, we don’t offer actual proxy capabilities and alway want to redirect to the docker socket.&lt;/li&gt;
-  &lt;li&gt;We forward the modified client request to the docker socket.&lt;/li&gt;
+  &lt;li&gt;Force the targeted hostname to &lt;code class=&quot;highlighter-rouge&quot;&gt;docker-socket&lt;/code&gt; in the client’s request. This allow us to have any hostname value for our running container. Also, we don’t offer actual proxy capabilities and alway want to redirect to the docker socket.&lt;/li&gt;
+  &lt;li&gt;Forward the modified client request to the docker socket.&lt;/li&gt;
   &lt;li&gt;If the request fail, we send a standard &lt;code class=&quot;highlighter-rouge&quot;&gt;Status Service Unavailable&lt;/code&gt; error to the client.&lt;/li&gt;
   &lt;li&gt;Else, we forward the answer of the docker API to the client.&lt;/li&gt;
 &lt;/ol&gt;
@@ -105,12 +105,12 @@ Futhermore, the use of a basic http server allows to act as a transparent revers
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;ol&gt;
-  &lt;li&gt;We move the source code to the container.&lt;/li&gt;
-  &lt;li&gt;We get required Go dependencies.&lt;/li&gt;
-  &lt;li&gt;We compile our source code.&lt;/li&gt;
-  &lt;li&gt;We move the output to &lt;code class=&quot;highlighter-rouge&quot;&gt;/bin&lt;/code&gt;.&lt;/li&gt;
-  &lt;li&gt;We set the user as root (required to access the docker-socket).&lt;/li&gt;
-  &lt;li&gt;We define &lt;code class=&quot;highlighter-rouge&quot;&gt;/bin/reverse-proxy&lt;/code&gt; as the entry point.&lt;/li&gt;
+  &lt;li&gt;Move the source code to the container.&lt;/li&gt;
+  &lt;li&gt;Get required Go dependencies.&lt;/li&gt;
+  &lt;li&gt;Compile our source code.&lt;/li&gt;
+  &lt;li&gt;Move the output to &lt;code class=&quot;highlighter-rouge&quot;&gt;/bin&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Set the user as root (required to access the docker-socket).&lt;/li&gt;
+  &lt;li&gt;Define &lt;code class=&quot;highlighter-rouge&quot;&gt;/bin/reverse-proxy&lt;/code&gt; as the entry point.&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;Nothing too fancy or difficult here. However, &lt;a href=&quot;/golang-reverse-proxy-1-4/#securing-the-docker-socket-using-nginx-&quot;&gt;security concerns&lt;/a&gt; aside, do we really want a container with a &lt;a href=&quot;https://hub.docker.com/r/library/golang/tags/&quot;&gt;295MB&lt;/a&gt; base image ? Probably not. Thanks to the use of a &lt;a href=&quot;https://docs.docker.com/develop/develop-images/multistage-build/&quot;&gt;multi-stage builds&lt;/a&gt; Dockerfile, we can build our reverse proxy &lt;a href=&quot;/golang-reverse-proxy-1-4/#scratch-images-and-golang-to-the-rescue&quot;&gt;statically&lt;/a&gt; and add the resulting binary in an empty container.&lt;/p&gt;
@@ -128,9 +128,9 @@ Futhermore, the use of a basic http server allows to act as a transparent revers
 
 &lt;p&gt;Our key additions :&lt;/p&gt;
 &lt;ol&gt;
-  &lt;li&gt;We define the golang container as a build step named &lt;code class=&quot;highlighter-rouge&quot;&gt;build&lt;/code&gt;.&lt;/li&gt;
-  &lt;li&gt;We compile the binary statically.&lt;/li&gt;
-  &lt;li&gt;We move the compiled binary from our &lt;code class=&quot;highlighter-rouge&quot;&gt;build&lt;/code&gt; container to the scratch container.&lt;/li&gt;
+  &lt;li&gt;Define the golang container as a build step named &lt;code class=&quot;highlighter-rouge&quot;&gt;build&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Compile the binary statically.&lt;/li&gt;
+  &lt;li&gt;Move the compiled binary from our &lt;code class=&quot;highlighter-rouge&quot;&gt;build&lt;/code&gt; container to the scratch container.&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;The result is a container with a size of 6.5MB and an as small as possible attack surface.&lt;/p&gt;
