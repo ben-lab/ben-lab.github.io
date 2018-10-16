@@ -5,12 +5,192 @@
     <description>Appsec and DevSecOps</description>
     <link>//</link>
     <atom:link href="//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 11 Oct 2018 06:25:57 -0500</pubDate>
-    <lastBuildDate>Thu, 11 Oct 2018 06:25:57 -0500</lastBuildDate>
+    <pubDate>Tue, 16 Oct 2018 09:41:00 -0500</pubDate>
+    <lastBuildDate>Tue, 16 Oct 2018 09:41:00 -0500</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
-        <title>Protecting a shared Docker socket using a Golang reverse-proxy (1/4)</title>
+        <title>Securing a shared Docker socket using a Golang reverse-proxy (2/4)</title>
+        <description>&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
+
+&lt;p&gt;In the &lt;a href=&quot;/golang-reverse-proxy-2-4/]&quot;&gt;previous part&lt;/a&gt; of this article series, we discussed :&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;How sharing the Docker socket with a container can lead to container escape and privilege escalation on the host.&lt;/li&gt;
+  &lt;li&gt;Why current Docker client’s permissions mechanisms are somewhat unadapted (or at least to my needs).&lt;/li&gt;
+  &lt;li&gt;How building a Golang reverse-proxy, handling clients authentication and permissions management to protect the Docker socket, can solve those issues.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In this article, we are going to discuss how to build a basic reverse proxy in Go and how to put it in a Docker image built &lt;code class=&quot;highlighter-rouge&quot;&gt;FROM SCRATCH&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;building-a-basic-go-reverse-proxy&quot;&gt;Building a basic Go Reverse-Proxy&lt;/h2&gt;
+
+&lt;p&gt;So let’s start by what any developer would do, &lt;del&gt;read the documentation,&lt;/del&gt; google if someone already did it. And lucky us, &lt;a href=&quot;https://twitter.com/mlowicki&quot;&gt;Michał Łowicki&lt;/a&gt; from Opera wrote a great &lt;a href=&quot;https://medium.com/@mlowicki/http-s-proxy-in-golang-in-less-than-100-lines-of-code-6a51c2f2c38c&quot;&gt;blog post&lt;/a&gt; on the topic.&lt;/p&gt;
+
+&lt;p&gt;In his implementation :&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;A web server wait for clients’ requests.&lt;/li&gt;
+  &lt;li&gt;An handler function receives HTTP requests, forward them to targeted web server and send the server’s responses back to the client.&lt;/li&gt;
+  &lt;li&gt;An handler function receives HTTPS requests, establishing a tunnel between the client and the server using &lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/CONNECT&quot;&gt;HTTP CONNECT&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Such design is perfect for us, since we can add our filtering logic in the handler function and block requests if needed (see part 3 of this article series).
+Futhermore, the use of a basic http server allows to act as a transparent reverse-proxy, which guarantee compatibility with any Docker client implementation (ie. docker official client, jenkins plugins and such).&lt;/p&gt;
+
+&lt;p&gt;However, we have to remove the &lt;code class=&quot;highlighter-rouge&quot;&gt;HTTP CONNECT&lt;/code&gt; implementation used to support HTTPS. Indeed, we will forward clients’ requests to a unix socket, thus we need to secure the connection between the clients and our proxy, not from the proxy to a web server. Additionally, we need to be able to analyse client requests’ content, which is not possible with an &lt;code class=&quot;highlighter-rouge&quot;&gt;HTTP CONNECT&lt;/code&gt; tunnel. Thus let’s start small and implement a basic HTTP reverse-proxy, HTTPS and client authentication will be added later (see part 4 of this article series).&lt;/p&gt;
+
+&lt;p&gt;First we setup the HTTP server :&lt;/p&gt;
+&lt;div class=&quot;language-golang highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Addr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;:8888&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Handler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;HandlerFunc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ResponseWriter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;handleHTTP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)}),&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fatal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ListenAndServe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then we add the HTTP handler with a couple modifications. The handler receive two “objects”, a ResponseWriter to answer to the client and the client’s request :&lt;/p&gt;
+&lt;div class=&quot;language-golang highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;handleHTTP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ResponseWriter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;httpunix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Transport&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;c&quot;&gt;//[1]&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DialTimeout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;           &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Millisecond&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RequestTimeout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;        &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Second&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ResponseHeaderTimeout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Second&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RegisterLocation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;docker-socket&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/var/run/docker.sock&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;c&quot;&gt;//[2]&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;URL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Scheme&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;http+unix&quot;&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;c&quot;&gt;//[3]&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;URL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Host&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;docker-socket&quot;&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;  &lt;/span&gt;&lt;span class=&quot;c&quot;&gt;//[4]&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;err&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;u&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RoundTrip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;   &lt;/span&gt;&lt;span class=&quot;c&quot;&gt;//[5]&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+    
+    &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;err&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;no&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;err&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;StatusServiceUnavailable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;c&quot;&gt;//[6]&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+
+    &lt;/span&gt;&lt;span class=&quot;c&quot;&gt;//[7]&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;defer&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Body&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Close&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;copyHeader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Header&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Header&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;WriteHeader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;StatusCode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Copy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;We create a new &lt;a href=&quot;https://godoc.org/github.com/tv42/httpunix&quot;&gt;httpunix&lt;/a&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;Transport&lt;/code&gt; instance which will be used to request the socket.&lt;/li&gt;
+  &lt;li&gt;We indicate that requests to the hostname &lt;code class=&quot;highlighter-rouge&quot;&gt;docker-socket&lt;/code&gt; actually target the docker unix socket.&lt;/li&gt;
+  &lt;li&gt;The client request’s &lt;code class=&quot;highlighter-rouge&quot;&gt;Sheme&lt;/code&gt; value is &lt;code class=&quot;highlighter-rouge&quot;&gt;http&lt;/code&gt;. Since we redirect it to a unix socket, we have to change it to &lt;code class=&quot;highlighter-rouge&quot;&gt;http+unix&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;We force the targeted hostname to &lt;code class=&quot;highlighter-rouge&quot;&gt;docker-socket&lt;/code&gt; in the client’s request. This allow us to have any hostname value for our running container. Also, we don’t offer actual proxy capabilities and alway want to redirect to the docker socket.&lt;/li&gt;
+  &lt;li&gt;We forward the modified client request to the docker socket.&lt;/li&gt;
+  &lt;li&gt;If the request fail, we send a standard &lt;code class=&quot;highlighter-rouge&quot;&gt;Status Service Unavailable&lt;/code&gt; error to the client.&lt;/li&gt;
+  &lt;li&gt;Else, we forward the answer of the docker API to the client.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;building-a-docker-image-from-scratch&quot;&gt;Building a Docker image from scratch&lt;/h2&gt;
+
+&lt;p&gt;A Docker image is built based on a &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt;, describing steps required to create it. In our case, a basic Docker image would look like this :&lt;/p&gt;
+
+&lt;div class=&quot;language-dockerfile highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; golang&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;COPY&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; src/reverse-proxy.go /go/src/      #[1]&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;RUN &lt;/span&gt;go get github.com/tv42/httpunix     &lt;span class=&quot;c&quot;&gt;#[2]&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;RUN &lt;/span&gt;go build src/reverse-proxy.go       &lt;span class=&quot;c&quot;&gt;#[3]&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;RUN &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mv&lt;/span&gt; /go/reverse-proxy /bin/reverse-proxy &lt;span class=&quot;c&quot;&gt;#[4]&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;USER&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; root                                   #[5]&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;ENTRYPOINT&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; [&quot;/bin/reverse-proxy&quot;] #[6]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;We move the source code to the container.&lt;/li&gt;
+  &lt;li&gt;We get required Go dependencies.&lt;/li&gt;
+  &lt;li&gt;We compile our source code.&lt;/li&gt;
+  &lt;li&gt;We move the output to &lt;code class=&quot;highlighter-rouge&quot;&gt;/bin&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;We set the user as root (required to access the docker-socket).&lt;/li&gt;
+  &lt;li&gt;We define &lt;code class=&quot;highlighter-rouge&quot;&gt;/bin/reverse-proxy&lt;/code&gt; as the entry point.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Nothing too fancy or difficult here. However, &lt;a href=&quot;/golang-reverse-proxy-1-4/#securing-the-docker-socket-using-nginx-&quot;&gt;security concerns&lt;/a&gt; aside, do we really want a container with a &lt;a href=&quot;https://hub.docker.com/r/library/golang/tags/&quot;&gt;295MB&lt;/a&gt; base image ? Probably not. Thanks to the use of a &lt;a href=&quot;https://docs.docker.com/develop/develop-images/multistage-build/&quot;&gt;multi-stage builds&lt;/a&gt; Dockerfile, we can build our reverse proxy &lt;a href=&quot;/golang-reverse-proxy-1-4/#scratch-images-and-golang-to-the-rescue&quot;&gt;statically&lt;/a&gt; and add the resulting binary in an empty container.&lt;/p&gt;
+
+&lt;div class=&quot;language-dockerfile highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; golang as build #[1]&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;COPY&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; reverse-proxy.go /go/src/&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;RUN &lt;/span&gt;go get github.com/tv42/httpunix
+&lt;span class=&quot;k&quot;&gt;RUN &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;CGO_ENABLED&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0 &lt;span class=&quot;nv&quot;&gt;GOOS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;linux go build &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ldflags&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'-extldflags &quot;-static&quot;'&lt;/span&gt; src/reverse-proxy.go &lt;span class=&quot;c&quot;&gt;#[2]&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; scratch&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;COPY&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; --from=build /go/reverse-proxy /bin/reverse-proxy #[3]&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;USER&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; root&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ENTRYPOINT&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; [&quot;/bin/reverse-proxy&quot;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Our key additions :&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;We define the golang container as a build step named &lt;code class=&quot;highlighter-rouge&quot;&gt;build&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;We compile the binary statically.&lt;/li&gt;
+  &lt;li&gt;We move the compiled binary from our &lt;code class=&quot;highlighter-rouge&quot;&gt;build&lt;/code&gt; container to the scratch container.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The result is a container with a size of 6.5MB and an as small as possible attack surface.&lt;/p&gt;
+
+&lt;h2 id=&quot;putting-everything-together&quot;&gt;Putting everything together&lt;/h2&gt;
+
+&lt;p&gt;A working proof-of-concept is available &lt;a href=&quot;https://github.com/ben-appsec/blog-material/tree/master/golang-reverse-proxy-2&quot;&gt;here&lt;/a&gt; for testing purpose. A docker-compose file is provided, which builds and launches the container. Once running, the container makes available the host’s docker socket through the reverse proxy on &lt;code class=&quot;highlighter-rouge&quot;&gt;localhost&lt;/code&gt; port &lt;code class=&quot;highlighter-rouge&quot;&gt;8888&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;How to run it :&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git clone https://github.com/ben-appsec/blog-material.git&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cd blog-material/golang-reverse-proxy-2&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;docker-compose up&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;docker -H=127.0.0.1:8888 container ls&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;em&gt;Note: docker and docker-compose must be installed.&lt;/em&gt;&lt;/p&gt;
+
+&lt;details&gt;
+    &lt;summary style=&quot;&quot; onclick=&quot;javascript:launchOrPausePlayer('poc-reverse-proxy')&quot;&gt;Demo&lt;/summary&gt;
+    &lt;asciinema-player id=&quot;poc-reverse-proxy&quot; src=&quot;/assets/uploads/2018/golang-reverse-proxy-2-4/poc-reverse-proxy.cast&quot; playing=&quot;false&quot; speed=&quot;1.5&quot; idle-time-limit=&quot;0.9&quot; rows=&quot;20&quot; cols=&quot;90&quot;&gt;&lt;/asciinema-player&gt;
+    &lt;script&gt;
+            var width = window.innerWidth
+            var player = document.getElementById(&quot;poc-reverse-proxy&quot;)
+
+            if(width &lt; 1270 &amp;&amp; width &gt;= 768) {
+                player.setAttribute(&quot;cols&quot;, Math.round(width/1270*80))
+            }
+            else if(width &lt; 768){
+                player.setAttribute(&quot;cols&quot;, Math.round(width/768*80))
+            }
+    &lt;/script&gt;
+&lt;/details&gt;
+&lt;p&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;whats-next-&quot;&gt;What’s next ?&lt;/h2&gt;
+
+&lt;p&gt;Now that we have a working basic reverse-proxy, we will see in part 3 how to add permissions management capabilities, based on a configuration file generated from the &lt;a href=&quot;https://docs.docker.com/engine/api/v1.37/&quot;&gt;Docker OpenAPI specification&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://medium.com/@mlowicki/http-s-proxy-in-golang-in-less-than-100-lines-of-code-6a51c2f2c38c&quot;&gt;https://medium.com/@mlowicki/http-s-proxy-in-golang-in-less-than-100-lines-of-code-6a51c2f2c38c&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://godoc.org/github.com/tv42/httpunix&quot;&gt;https://godoc.org/github.com/tv42/httpunix&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/CONNECT&quot;&gt;https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/CONNECT&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.docker.com/develop/develop-images/multistage-build/&quot;&gt;https://docs.docker.com/develop/develop-images/multistage-build/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Wed, 10 Oct 2018 11:10:00 -0500</pubDate>
+        <link>//golang-reverse-proxy-2-4/</link>
+        <guid isPermaLink="true">//golang-reverse-proxy-2-4/</guid>
+        
+        <category>Docker</category>
+        
+        <category>Golang</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Securing a shared Docker socket using a Golang reverse-proxy (1/4)</title>
         <description>&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
 
 &lt;p&gt;If you already worked a bit with Docker, maybe did you end-up in a situation were you needed to launch/create/manage a new container &lt;strong&gt;from&lt;/strong&gt; an already existing one. For example, when you are running a dockerized Jenkins instance and need to create ephemeral containers in your pipeline to perform build tasks.&lt;/p&gt;
