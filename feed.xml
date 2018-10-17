@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>https://ben-appsec.github.io//</link>
     <atom:link href="https://ben-appsec.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 17 Oct 2018 04:50:23 -0500</pubDate>
-    <lastBuildDate>Wed, 17 Oct 2018 04:50:23 -0500</lastBuildDate>
+    <pubDate>Wed, 17 Oct 2018 04:53:16 -0500</pubDate>
+    <lastBuildDate>Wed, 17 Oct 2018 04:53:16 -0500</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -176,6 +176,7 @@ Futhermore, the use of a basic http server allows to act as a transparent revers
   &lt;li&gt;&lt;a href=&quot;https://godoc.org/github.com/tv42/httpunix&quot;&gt;https://godoc.org/github.com/tv42/httpunix&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/CONNECT&quot;&gt;https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/CONNECT&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://docs.docker.com/develop/develop-images/multistage-build/&quot;&gt;https://docs.docker.com/develop/develop-images/multistage-build/&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://blog.alphasmanifesto.com/tag/build-process/&quot;&gt;https://blog.alphasmanifesto.com/tag/build-process/&lt;/a&gt; (cover)&lt;/li&gt;
 &lt;/ul&gt;
 </description>
         <pubDate>Wed, 10 Oct 2018 11:10:00 -0500</pubDate>
