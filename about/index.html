@@ -47,21 +47,15 @@
   <link type="application/atom+xml" rel="alternate" href="/feed.xml" title="ben's lab" />
 
   <script src="/assets/res/jquery-3.1.0.min.js"></script>
-  <script>
-    function launchOrPausePlayer(id) {
-      var player = document.getElementById(id)
-      var playing = player.attributes.getNamedItem("playing").value
 
-      if(playing == "false") {
-        player.play()
-        player.setAttribute("playing", "true")
-      }
-      else {
-        player.pause()
-        player.setAttribute("playing", "false")
-      }
-    }
-  </script>
+  <!-- Google analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-127625633-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-127625633-1');
+</script>
 
   <!-- Begin Jekyll SEO tag v2.5.0 -->
 <meta name="generator" content="Jekyll v3.8.4" />
@@ -77,6 +71,33 @@
 {"headline":"About","@type":"WebSite","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/icones/logo.png"},"name":"Ben"},"url":"/about/","name":"ben’s lab","author":{"@type":"Person","name":"Ben"},"description":"Appsec and DevSecOps","@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
+
+  <!-- Twitter card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="ben's lab" />
+  <meta name="twitter:creator" content="Ben" />
+  <meta name="twitter:title" content="About" />
+  <meta name="twitter:description" content="" />
+  
+  <meta name="twitter:image" content="/assets/icones/logo.png" />
+  
+
+  <!-- asccinema -->
+  <script>
+    function launchOrPausePlayer(id) {
+      var player = document.getElementById(id)
+      var playing = player.attributes.getNamedItem("playing").value
+
+      if(playing == "false") {
+        player.play()
+        player.setAttribute("playing", "true")
+      }
+      else {
+        player.pause()
+        player.setAttribute("playing", "false")
+      }
+    }
+  </script>
 </head>
 
 
