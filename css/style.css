@@ -102,3 +102,7 @@ summary {
 .post-comments-count {
   display: inline-block
 }
+
+.post h2 {
+  clear: both;
+}
