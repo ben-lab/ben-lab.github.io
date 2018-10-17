@@ -1,1 +1,1 @@
-Sitemap: /sitemap.xml
+Sitemap: https://ben-appsec.github.io/sitemap.xml
