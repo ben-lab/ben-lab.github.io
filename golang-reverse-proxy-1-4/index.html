@@ -183,7 +183,8 @@
 
 <p>If you already worked a bit with Docker, maybe did you end-up in a situation were you needed to launch/create/manage a new container <strong>from</strong> an already existing one. For example, when you are running a dockerized Jenkins instance and need to create ephemeral containers in your pipeline to perform build tasks.</p>
 
-<p>In such case, a quick Google search will offers you two main options :</p>
+<p>In such case, a quick Google search will offers you two main options :
+<!--more--></p>
 <ul>
   <li>
     <p><strong>Docker inside Docker (DinD) :</strong> you perform a full Docker installation within you container. Basically, you run Docker on top of another Docker. I’m not a big fan of this approach and some people much more knowledgeable than me have explained <a href="https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/">why it might be a bad idea</a> (spoiler: filesystem issues and risks of corruption). This options however seems to remain relevant in some cases, for instance if you are using <a href="https://applatix.com/case-docker-docker-kubernetes-part/">Kubernetes</a>.</p>

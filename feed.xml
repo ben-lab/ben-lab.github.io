@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>https://ben-appsec.github.io//</link>
     <atom:link href="https://ben-appsec.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 17 Oct 2018 08:51:28 -0500</pubDate>
-    <lastBuildDate>Wed, 17 Oct 2018 08:51:28 -0500</lastBuildDate>
+    <pubDate>Wed, 17 Oct 2018 09:03:20 -0500</pubDate>
+    <lastBuildDate>Wed, 17 Oct 2018 09:03:20 -0500</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -21,6 +21,8 @@
 &lt;/ul&gt;
 
 &lt;p&gt;In this article, we are going to discuss how to build a basic reverse proxy in Go and how to put it in a Docker image built &lt;code class=&quot;highlighter-rouge&quot;&gt;FROM SCRATCH&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;!--more--&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;building-a-basic-go-reverse-proxy&quot;&gt;Building a basic Go Reverse-Proxy&lt;/h2&gt;
 
@@ -196,7 +198,8 @@ Futhermore, the use of a basic http server allows to act as a transparent revers
 
 &lt;p&gt;If you already worked a bit with Docker, maybe did you end-up in a situation were you needed to launch/create/manage a new container &lt;strong&gt;from&lt;/strong&gt; an already existing one. For example, when you are running a dockerized Jenkins instance and need to create ephemeral containers in your pipeline to perform build tasks.&lt;/p&gt;
 
-&lt;p&gt;In such case, a quick Google search will offers you two main options :&lt;/p&gt;
+&lt;p&gt;In such case, a quick Google search will offers you two main options :
+&lt;!--more--&gt;&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;
     &lt;p&gt;&lt;strong&gt;Docker inside Docker (DinD) :&lt;/strong&gt; you perform a full Docker installation within you container. Basically, you run Docker on top of another Docker. I’m not a big fan of this approach and some people much more knowledgeable than me have explained &lt;a href=&quot;https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/&quot;&gt;why it might be a bad idea&lt;/a&gt; (spoiler: filesystem issues and risks of corruption). This options however seems to remain relevant in some cases, for instance if you are using &lt;a href=&quot;https://applatix.com/case-docker-docker-kubernetes-part/&quot;&gt;Kubernetes&lt;/a&gt;.&lt;/p&gt;
