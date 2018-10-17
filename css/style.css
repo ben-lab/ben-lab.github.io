@@ -94,3 +94,11 @@ summary {
   padding-left: 25px;
   font-style: italic;
 }
+
+/*
+  Custom
+*/
+
+.post-comments-count {
+  display: inline-block
+}
