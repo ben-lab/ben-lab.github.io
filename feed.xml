@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>https://ben-appsec.github.io//</link>
     <atom:link href="https://ben-appsec.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 17 Oct 2018 10:29:06 -0500</pubDate>
-    <lastBuildDate>Wed, 17 Oct 2018 10:29:06 -0500</lastBuildDate>
+    <pubDate>Wed, 17 Oct 2018 15:05:09 -0500</pubDate>
+    <lastBuildDate>Wed, 17 Oct 2018 15:05:09 -0500</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -17,7 +17,7 @@
 &lt;ul&gt;
   &lt;li&gt;How sharing the Docker socket with a container can lead to container escape and privilege escalation on the host.&lt;/li&gt;
   &lt;li&gt;Why current Docker client’s permissions mechanisms are somewhat unadapted (or at least to my needs).&lt;/li&gt;
-  &lt;li&gt;How building a Golang reverse-proxy, handling clients authentication and permissions management to protect the Docker socket, can solve those issues.&lt;/li&gt;
+  &lt;li&gt;How building a Golang reverse-proxy, handling clients authentication and permissions, can solve those issues.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;In this article, we are going to discuss how to build a basic reverse proxy in Go and how to put it in a Docker image built &lt;code class=&quot;highlighter-rouge&quot;&gt;FROM SCRATCH&lt;/code&gt;.&lt;/p&gt;
