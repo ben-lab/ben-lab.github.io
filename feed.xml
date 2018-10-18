@@ -3,10 +3,10 @@
   <channel>
     <title>ben's lab</title>
     <description>Appsec and DevSecOps</description>
-    <link>https://ben-appsec.github.io//</link>
-    <atom:link href="https://ben-appsec.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 17 Oct 2018 15:38:22 -0500</pubDate>
-    <lastBuildDate>Wed, 17 Oct 2018 15:38:22 -0500</lastBuildDate>
+    <link>https://ben-lab.github.io//</link>
+    <atom:link href="https://ben-lab.github.io//feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Thu, 18 Oct 2018 16:25:47 -0500</pubDate>
+    <lastBuildDate>Thu, 18 Oct 2018 16:25:47 -0500</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -182,8 +182,8 @@ Futhermore, the use of a basic http server allows to act as a transparent revers
 &lt;/ul&gt;
 </description>
         <pubDate>Wed, 10 Oct 2018 11:10:00 -0500</pubDate>
-        <link>https://ben-appsec.github.io//golang-reverse-proxy-2-4/</link>
-        <guid isPermaLink="true">https://ben-appsec.github.io//golang-reverse-proxy-2-4/</guid>
+        <link>https://ben-lab.github.io//golang-reverse-proxy-2-4/</link>
+        <guid isPermaLink="true">https://ben-lab.github.io//golang-reverse-proxy-2-4/</guid>
         
         <category>Docker</category>
         
@@ -349,8 +349,8 @@ Futhermore, the use of a basic http server allows to act as a transparent revers
 &lt;/ul&gt;
 </description>
         <pubDate>Mon, 24 Sep 2018 11:10:00 -0500</pubDate>
-        <link>https://ben-appsec.github.io//golang-reverse-proxy-1-4/</link>
-        <guid isPermaLink="true">https://ben-appsec.github.io//golang-reverse-proxy-1-4/</guid>
+        <link>https://ben-lab.github.io//golang-reverse-proxy-1-4/</link>
+        <guid isPermaLink="true">https://ben-lab.github.io//golang-reverse-proxy-1-4/</guid>
         
         <category>Docker</category>
         
