@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>https://ben-lab.github.io//</link>
     <atom:link href="https://ben-lab.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 18 Oct 2018 16:25:47 -0500</pubDate>
-    <lastBuildDate>Thu, 18 Oct 2018 16:25:47 -0500</lastBuildDate>
+    <pubDate>Fri, 19 Oct 2018 01:53:12 -0500</pubDate>
+    <lastBuildDate>Fri, 19 Oct 2018 01:53:12 -0500</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -139,11 +139,11 @@ Futhermore, the use of a basic http server allows to act as a transparent revers
 
 &lt;h2 id=&quot;putting-everything-together&quot;&gt;Putting everything together&lt;/h2&gt;
 
-&lt;p&gt;A working proof-of-concept is available &lt;a href=&quot;https://github.com/ben-appsec/blog-material/tree/master/golang-reverse-proxy-2&quot;&gt;here&lt;/a&gt; for testing purpose. A docker-compose file is provided, which builds and launches the container. Once running, the container makes available the host’s docker socket through the reverse proxy on &lt;code class=&quot;highlighter-rouge&quot;&gt;localhost&lt;/code&gt; port &lt;code class=&quot;highlighter-rouge&quot;&gt;8888&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;A working proof-of-concept is available &lt;a href=&quot;https://github.com/ben-lab/blog-material/tree/master/golang-reverse-proxy-2&quot;&gt;here&lt;/a&gt; for testing purpose. A docker-compose file is provided, which builds and launches the container. Once running, the container makes available the host’s docker socket through the reverse proxy on &lt;code class=&quot;highlighter-rouge&quot;&gt;localhost&lt;/code&gt; port &lt;code class=&quot;highlighter-rouge&quot;&gt;8888&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;How to run it :&lt;/p&gt;
 &lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git clone https://github.com/ben-appsec/blog-material.git&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git clone https://github.com/ben-lab/blog-material.git&lt;/code&gt;&lt;/li&gt;
   &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cd blog-material/golang-reverse-proxy-2&lt;/code&gt;&lt;/li&gt;
   &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;docker-compose up&lt;/code&gt;&lt;/li&gt;
   &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;docker -H=127.0.0.1:8888 container ls&lt;/code&gt;&lt;/li&gt;

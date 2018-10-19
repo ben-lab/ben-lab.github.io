@@ -157,7 +157,7 @@
     <p class="sidebar-copyright">&copy; 2018. All rights reserved.</p>
     <div class="sidebar-social">
     <ul>
-      <li><a href="https://github.com/ben-appsec" title="Github" target="_blank"><img title="Github" alt="Github" src="/assets/icones/social/github.png" /></a></li>
+      <li><a href="https://github.com/ben-lab" title="Github" target="_blank"><img title="Github" alt="Github" src="/assets/icones/social/github.png" /></a></li>
       <li><a href="/feed.xml" title="RSS" target="_blank"><img title="RSS" alt="RSS" src="/assets/icones/social/rss.png" /></a></li>
     </ul>
     </div>
@@ -307,11 +307,11 @@ Futhermore, the use of a basic http server allows to act as a transparent revers
 
 <h2 id="putting-everything-together">Putting everything together</h2>
 
-<p>A working proof-of-concept is available <a href="https://github.com/ben-appsec/blog-material/tree/master/golang-reverse-proxy-2">here</a> for testing purpose. A docker-compose file is provided, which builds and launches the container. Once running, the container makes available the host’s docker socket through the reverse proxy on <code class="highlighter-rouge">localhost</code> port <code class="highlighter-rouge">8888</code>.</p>
+<p>A working proof-of-concept is available <a href="https://github.com/ben-lab/blog-material/tree/master/golang-reverse-proxy-2">here</a> for testing purpose. A docker-compose file is provided, which builds and launches the container. Once running, the container makes available the host’s docker socket through the reverse proxy on <code class="highlighter-rouge">localhost</code> port <code class="highlighter-rouge">8888</code>.</p>
 
 <p>How to run it :</p>
 <ul>
-  <li><code class="highlighter-rouge">git clone https://github.com/ben-appsec/blog-material.git</code></li>
+  <li><code class="highlighter-rouge">git clone https://github.com/ben-lab/blog-material.git</code></li>
   <li><code class="highlighter-rouge">cd blog-material/golang-reverse-proxy-2</code></li>
   <li><code class="highlighter-rouge">docker-compose up</code></li>
   <li><code class="highlighter-rouge">docker -H=127.0.0.1:8888 container ls</code></li>
