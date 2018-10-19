@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>https://ben-lab.github.io//</link>
     <atom:link href="https://ben-lab.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 19 Oct 2018 01:53:12 -0500</pubDate>
-    <lastBuildDate>Fri, 19 Oct 2018 01:53:12 -0500</lastBuildDate>
+    <pubDate>Fri, 19 Oct 2018 04:18:45 -0500</pubDate>
+    <lastBuildDate>Fri, 19 Oct 2018 04:18:45 -0500</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -331,7 +331,7 @@ Futhermore, the use of a basic http server allows to act as a transparent revers
 
 &lt;p&gt;If you are looking for a production ready solution and are not really interested by the DIY part, you may want to have a look at :&lt;/p&gt;
 &lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/open-policy-agent/opa&quot;&gt;Open Policy Agent&lt;/a&gt;, a general-purpose policy engine which happens to have a tutorial for &lt;a href=&quot;https://www.openpolicyagent.org/docs/docker-authorization.html&quot;&gt;this exact use case&lt;/a&gt;. However it requires to install a Docker plugin and doesn’t offer actual client authentication.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/open-policy-agent/opa&quot;&gt;Open Policy Agent&lt;/a&gt;, a general-purpose policy engine which happens to have a tutorial for &lt;a href=&quot;https://www.openpolicyagent.org/docs/docker-authorization.html&quot;&gt;this exact use case&lt;/a&gt;. However it requires to install a Docker plugin and doesn’t offer actual client authentication. Alternatively, the possibility to use it as an &lt;a href=&quot;https://www.openpolicyagent.org/docs/http-api-authorization.html&quot;&gt;API Authorization engine&lt;/a&gt; might be interesting.&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://github.com/TykTechnologies/tyk&quot;&gt;Tyk&lt;/a&gt;, a lightweight API Gateway coded in Go, offering filtering capabilities. However, it doesn’t seem to filter parameters.&lt;/li&gt;
   &lt;li&gt;Your current API gateway or reverse-proxy that may offer some kind of ACL capabilities for API requests.&lt;/li&gt;
 &lt;/ul&gt;
