@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>https://ben-lab.github.io//</link>
     <atom:link href="https://ben-lab.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 28 Feb 2019 07:51:39 -0600</pubDate>
-    <lastBuildDate>Thu, 28 Feb 2019 07:51:39 -0600</lastBuildDate>
+    <pubDate>Thu, 28 Feb 2019 07:53:43 -0600</pubDate>
+    <lastBuildDate>Thu, 28 Feb 2019 07:53:43 -0600</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -86,7 +86,7 @@ Now let’s see the associated Kubernetes Service used to expose those ports usi
   &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;NodePort&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Question : What would happen if you &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl apply -f&lt;/code&gt; those yaml files ?
+&lt;p&gt;Question : what would happen if you &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl apply -f&lt;/code&gt; those yaml files ?&lt;br /&gt;
 It will work without issue.&lt;/p&gt;
 
 &lt;h2 id=&quot;the-bug&quot;&gt;The bug&lt;/h2&gt;
