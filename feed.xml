@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>https://ben-lab.github.io//</link>
     <atom:link href="https://ben-lab.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 28 Feb 2019 07:46:30 -0600</pubDate>
-    <lastBuildDate>Thu, 28 Feb 2019 07:46:30 -0600</lastBuildDate>
+    <pubDate>Thu, 28 Feb 2019 07:47:52 -0600</pubDate>
+    <lastBuildDate>Thu, 28 Feb 2019 07:47:52 -0600</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -17,7 +17,7 @@
 
 &lt;h2 id=&quot;how-it-is-supposed-to-work&quot;&gt;How it is supposed to work&lt;/h2&gt;
 
-&lt;p&gt;Let’s say you want to expose the following pod :&lt;/p&gt;
+&lt;p&gt;Let’s say you want to expose the following Pod using a Deployment :&lt;/p&gt;
 
 &lt;p&gt;&lt;!--more--&gt;&lt;/p&gt;
 
