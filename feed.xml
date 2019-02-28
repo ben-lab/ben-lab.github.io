@@ -5,12 +5,12 @@
     <description>Appsec and DevSecOps</description>
     <link>https://ben-lab.github.io//</link>
     <atom:link href="https://ben-lab.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 28 Feb 2019 07:37:01 -0600</pubDate>
-    <lastBuildDate>Thu, 28 Feb 2019 07:37:01 -0600</lastBuildDate>
+    <pubDate>Thu, 28 Feb 2019 07:42:47 -0600</pubDate>
+    <lastBuildDate>Thu, 28 Feb 2019 07:42:47 -0600</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
-        <title>How a Kubernetes bug won't let you expose a service over TCP and UDP on the same port</title>
+        <title>How a Kubernetes bug won't let you expose a service over TCP and UDP on a same port</title>
         <description>&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
 
 &lt;p&gt;Long story short, I wasted hours of my life because of an unfixed 2016 Kubernetes’s bug that didn’t want me to expose a service over both UDP and TCP on a same port. May this article come up in your Google search and save you hours of suffering.&lt;/p&gt;
