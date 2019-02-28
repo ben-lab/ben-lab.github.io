@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>https://ben-lab.github.io//</link>
     <atom:link href="https://ben-lab.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 28 Feb 2019 08:29:17 -0600</pubDate>
-    <lastBuildDate>Thu, 28 Feb 2019 08:29:17 -0600</lastBuildDate>
+    <pubDate>Thu, 28 Feb 2019 08:35:07 -0600</pubDate>
+    <lastBuildDate>Thu, 28 Feb 2019 08:35:07 -0600</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -134,7 +134,7 @@ It will work without issue.&lt;/p&gt;
 
 &lt;p&gt;This is due to the way Kubernetes updates existing configuration files: it uses “merge keys” to match fields from the new configuration with fields of the existing one. In our context, the merge key used is &lt;code class=&quot;highlighter-rouge&quot;&gt;port&lt;/code&gt;, which happens to be the same for TCP and UDP. As a result, only the first “match” from the new configuration file is applied.&lt;/p&gt;
 
-&lt;p&gt;An issue has been created in 2016 for this bug, but remains opened to this day : &lt;a href=&quot;https://github.com/kubernetes/kubernetes/issues/39188&quot;&gt;https://github.com/kubernetes/kubernetes/issues/39188&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;An issue has been created in 2016 for this bug, but remains open to this day : &lt;a href=&quot;https://github.com/kubernetes/kubernetes/issues/39188&quot;&gt;https://github.com/kubernetes/kubernetes/issues/39188&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;the-solution&quot;&gt;The solution&lt;/h2&gt;
 

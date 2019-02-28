@@ -302,7 +302,7 @@ It will work without issue.</p>
 
 <p>This is due to the way Kubernetes updates existing configuration files: it uses “merge keys” to match fields from the new configuration with fields of the existing one. In our context, the merge key used is <code class="highlighter-rouge">port</code>, which happens to be the same for TCP and UDP. As a result, only the first “match” from the new configuration file is applied.</p>
 
-<p>An issue has been created in 2016 for this bug, but remains opened to this day : <a href="https://github.com/kubernetes/kubernetes/issues/39188">https://github.com/kubernetes/kubernetes/issues/39188</a></p>
+<p>An issue has been created in 2016 for this bug, but remains open to this day : <a href="https://github.com/kubernetes/kubernetes/issues/39188">https://github.com/kubernetes/kubernetes/issues/39188</a></p>
 
 <h2 id="the-solution">The solution</h2>
 
