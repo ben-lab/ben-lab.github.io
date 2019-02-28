@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr-fr">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile" hreflang="fr">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      How a Kubernetes bug won't let you expose a service over TCP and UDP on the same port - ben's lab
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" type="text/css" href="/css/poole.css">
+  <link rel="stylesheet" type="text/css" href="/css/syntax.css">
+  <link rel="stylesheet" type="text/css" href="/css/hyde.css">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <link rel="stylesheet" type="text/css" href="/css/asciinema-player.css">
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Signika:600">
+  <link rel="stylesheet" type="text/css" href="/css/print.css" media="print">
+  <!-- Icons -->
+
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icones/favicon/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icones/favicon/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icones/favicon/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icones/favicon/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icones/favicon/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icones/favicon/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icones/favicon/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icones/favicon/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icones/favicon/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icones/favicon/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icones/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icones/favicon/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icones/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/assets/res/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icones/favicon/ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+
+  <!-- RSS -->
+  <link type="application/atom+xml" rel="alternate" href="https://ben-lab.github.io/feed.xml" title="ben's lab" />
+
+  <script src="/assets/res/jquery-3.1.0.min.js"></script>
+
+  <!-- Google analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-127625633-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-127625633-1');
+</script>
+
+  <!-- Begin Jekyll SEO tag v2.5.0 -->
+<meta name="generator" content="Jekyll v3.8.4" />
+<meta property="og:title" content="How a Kubernetes bug won’t let you expose a service over TCP and UDP on the same port" />
+<meta name="author" content="Ben" />
+<meta property="og:locale" content="en_EN" />
+<meta name="description" content="How I wasted hours of my life because of an unfixed 2016 Kubernetes’s bug that didn’t want me to expose a service over both UDP and TCP on a same port." />
+<meta property="og:description" content="How I wasted hours of my life because of an unfixed 2016 Kubernetes’s bug that didn’t want me to expose a service over both UDP and TCP on a same port." />
+<link rel="canonical" href="https://ben-lab.github.io/kubernetes-UDP-TCP-bug-same-port/" />
+<meta property="og:url" content="https://ben-lab.github.io/kubernetes-UDP-TCP-bug-same-port/" />
+<meta property="og:site_name" content="ben’s lab" />
+<meta property="og:image" content="https://ben-lab.github.io/assets/uploads/2019/Kubernetes-UDP-TCP-bug-same-port/Kubernetes_Logo_headpic.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-02-27T08:10:00-06:00" />
+<script type="application/ld+json">
+{"headline":"How a Kubernetes bug won’t let you expose a service over TCP and UDP on the same port","dateModified":"2019-02-27T08:10:00-06:00","datePublished":"2019-02-27T08:10:00-06:00","image":"https://ben-lab.github.io/assets/uploads/2019/Kubernetes-UDP-TCP-bug-same-port/Kubernetes_Logo_headpic.png","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ben-lab.github.io/kubernetes-UDP-TCP-bug-same-port/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://ben-lab.github.io/assets/icones/logo.png"},"name":"Ben"},"url":"https://ben-lab.github.io/kubernetes-UDP-TCP-bug-same-port/","author":{"@type":"Person","name":"Ben"},"description":"How I wasted hours of my life because of an unfixed 2016 Kubernetes’s bug that didn’t want me to expose a service over both UDP and TCP on a same port.","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  <!-- Twitter card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="How a Kubernetes bug won't let you expose a service over TCP and UDP on the same port" />
+  <meta name="twitter:description" content="How I wasted hours of my life because of an unfixed 2016 Kubernetes's bug that didn't want me to expose a service over both UDP and TCP on a same port." />
+  
+  <meta name="twitter:image" content="https://ben-lab.github.io/assets/uploads/2019/Kubernetes-UDP-TCP-bug-same-port/Kubernetes_Logo_headpic.png" />
+  
+
+  <!-- asccinema -->
+  <script>
+    function launchOrPausePlayer(id) {
+      var player = document.getElementById(id)
+      var playing = player.attributes.getNamedItem("playing").value
+
+      if(playing == "false") {
+        player.play()
+        player.setAttribute("playing", "true")
+      }
+      else {
+        player.pause()
+        player.setAttribute("playing", "false")
+      }
+    }
+  </script>
+</head>
+
+
+  <body>
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <img id="site-logo" src="/assets/icones/logo.png" alt="logo" title="logo" />
+        <a href="/">
+          ben's lab
+        </a>
+      </h1>
+      <p class="lead">Appsec & DevSecOps</p>
+    </div>
+
+    <div class="sidebar-section">
+        <nav class="sidebar-nav">
+          <a class="sidebar-nav-item" href="/">Home</a>
+    
+          
+          
+            
+              
+                <a class="sidebar-nav-item" href="/browse/">Articles</a>
+              
+            
+          
+            
+              
+                <a class="sidebar-nav-item" href="/about/">About</a>
+              
+            
+          
+            
+          
+            
+              
+            
+          
+            
+          
+            
+          
+            
+          
+        </nav>
+    </div>
+
+    <div class="sidebar-section">
+        <p>Favorites</p>
+        <a href="https://www.zenk-security.com" target="_blank">Zenk-Security</a><br />
+    </div>
+
+    <p class="sidebar-copyright">&copy; 2019. All rights reserved.</p>
+    <div class="sidebar-social">
+    <ul>
+      <li><a href="https://github.com/ben-lab" title="Github" target="_blank"><img title="Github" alt="Github" src="/assets/icones/social/github.png" /></a></li>
+      <li><a href="/feed.xml" title="RSS" target="_blank"><img title="RSS" alt="RSS" src="/assets/icones/social/rss.png" /></a></li>
+    </ul>
+    </div>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  
+  <div class="post-cover">
+    <img src="/assets/uploads/2019/Kubernetes-UDP-TCP-bug-same-port/Kubernetes_Logo_headpic.png" alt="How a Kubernetes bug won't let you expose a service over TCP and UDP on the same port" title="How a Kubernetes bug won't let you expose a service over TCP and UDP on the same port" />
+  </div>
+  
+  <h1 class="post-title">How a Kubernetes bug won't let you expose a service over TCP and UDP on the same port</h1>
+  <div class="post-info">
+      <p class="alignleft">27 Feb 2019 <a class="post-comments-count" href="https://https://ben-lab.github.io/kubernetes-UDP-TCP-bug-same-port/#disqus_thread"></a></p>
+      <p class="alignright">Author : <strong>Ben</strong></p>
+  </div>
+
+  <article>
+  <h2 id="introduction">Introduction</h2>
+
+<p>Long story short, I wasted hours of my life because of an unfixed 2016 Kubernetes’s bug that didn’t want me to expose a service over both UDP and TCP on a same port. May this article come up in your Google search and save you hours of suffering.</p>
+
+<h2 id="how-it-is-supposed-to-work">How it is supposed to work</h2>
+
+<p>Let’s say you want to expose the following pod :</p>
+
+<p><!--more--></p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">myapp-deployment</span>
+
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">myapp</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="s">1</span>
+
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">myapp</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">myapp</span>
+        <span class="na">image</span><span class="pi">:</span> <span class="s">someuser/myapp</span>
+
+        <span class="na">ports</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="s">8081</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">web-interface</span>
+        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="s">31000</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">a-service</span>
+          <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="s">31000</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">a-service-udp</span>
+          <span class="na">protocol</span><span class="pi">:</span> <span class="s">UDP</span>
+</code></pre></div></div>
+
+<p>You have a Web Interface to manage a service, which is available on both TCP and UDP.
+Now let’s see the associated Kubernetes Service used to expose those ports using NodePort.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">annotations</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">myapp-service</span>
+
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">externalTrafficPolicy</span><span class="pi">:</span> <span class="s">Cluster</span>
+
+  <span class="na">ports</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">web-interface</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="s">8081</span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="s">8081</span>
+    <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">a-service</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="s">31000</span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="s">31000</span>
+    <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">a-service-udp</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="s">31000</span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="s">31000</span>
+    <span class="na">protocol</span><span class="pi">:</span> <span class="s">UDP</span>
+
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">transmission</span>
+
+  <span class="na">type</span><span class="pi">:</span> <span class="s">NodePort</span>
+</code></pre></div></div>
+
+<p>So now what would happen if you <code class="highlighter-rouge">kubectl apply -f</code> those yaml files ?
+It will work without issue.</p>
+
+<h2 id="the-bug">The bug</h2>
+
+<p>However, if you poor soul had the misfortune to first deploy a configuration like the following one, planning to add UDP later :</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">[</span><span class="nv">...</span><span class="pi">]</span>
+
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">myapp</span>
+        <span class="na">image</span><span class="pi">:</span> <span class="s">someuser/myapp</span>
+
+        <span class="na">ports</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="s">8081</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">web-interface</span>
+        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="s">31000</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">a-service</span>
+          <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+
+<span class="pi">[</span><span class="nv">...</span><span class="pi">]</span>
+</code></pre></div></div>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">[</span><span class="nv">...</span><span class="pi">]</span>
+
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">externalTrafficPolicy</span><span class="pi">:</span> <span class="s">Cluster</span>
+
+  <span class="na">ports</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">web-interface</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="s">8081</span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="s">8081</span>
+    <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">a-service</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="s">31000</span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="s">31000</span>
+    <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+    
+<span class="pi">[</span><span class="nv">...</span><span class="pi">]</span>
+</code></pre></div></div>
+
+<p>Then you <strong>never</strong> will be able to add said UDP service by updating your configuration using <code class="highlighter-rouge">kubectl apply</code> and <code class="highlighter-rouge">kubectl edit</code>.</p>
+
+<h2 id="the-reason-why">The reason why</h2>
+
+<p>This is due to the way Kubernetes updates existing configuration files : it uses “merge keys” to match fields from the new configuration with the existing ones. In our context, the merge key used is <code class="highlighter-rouge">port</code>, which happens to be the same for TCP and UDP. As a result, only the first “match” from the new configuration file is applied.</p>
+
+<p>An issue has been created in 2016 for this bug, but remains open to this day : https://github.com/kubernetes/kubernetes/issues/39188</p>
+
+<h2 id="the-solution">The solution</h2>
+
+<p>As a result, the solution is quiet simple : <code class="highlighter-rouge">kubectl delete</code> existing Deployments and Services, and recreate them rather than updating them.</p>
+
+  </article>
+</div>
+
+<div class="related">
+  <h2>Related Articles</h2>
+  <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/golang-reverse-proxy-2-4/">
+            Securing a shared Docker socket using a Golang reverse-proxy (2/4)
+            <small>10 Oct 2018</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/golang-reverse-proxy-1-4/">
+            Securing a shared Docker socket using a Golang reverse-proxy (1/4)
+            <small>24 Sep 2018</small>
+          </a>
+        </h3>
+      </li>
+    
+  </ul>
+</div>
+
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+
+var disqus_config = function () {
+this.page.url = 'https://ben-lab.github.io/kubernetes-UDP-TCP-bug-same-port/';  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = '/kubernetes-UDP-TCP-bug-same-port/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://ben-lab.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                            
+
+    </div>
+
+  <script src="/assets/res/asciinema-player.js"></script>
+  <script src="/assets/res/anchor.min.js"></script>
+  <script src="/assets/res/script.js"></script>
+  <script id="dsq-count-scr" src="//ben-lab.disqus.com/count.js" async></script>
+  </body>
+</html>
