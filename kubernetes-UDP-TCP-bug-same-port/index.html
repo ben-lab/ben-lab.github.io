@@ -254,7 +254,7 @@ Now let’s see the associated Kubernetes Service used to expose those ports usi
   <span class="na">type</span><span class="pi">:</span> <span class="s">NodePort</span>
 </code></pre></div></div>
 
-<p>Question : what would happen if you <code class="highlighter-rouge">kubectl apply -f</code> those yaml files ?<br />
+<p>Question: what would happen if you <code class="highlighter-rouge">kubectl apply -f</code> those yaml files ?<br />
 It will work without issue.</p>
 
 <h2 id="the-bug">The bug</h2>
@@ -300,7 +300,7 @@ It will work without issue.</p>
 
 <h2 id="the-reason-why">The reason why</h2>
 
-<p>This is due to the way Kubernetes updates existing configuration files : it uses “merge keys” to match fields from the new configuration with fields of the existing one. In our context, the merge key used is <code class="highlighter-rouge">port</code>, which happens to be the same for TCP and UDP. As a result, only the first “match” from the new configuration file is applied.</p>
+<p>This is due to the way Kubernetes updates existing configuration files: it uses “merge keys” to match fields from the new configuration with fields of the existing one. In our context, the merge key used is <code class="highlighter-rouge">port</code>, which happens to be the same for TCP and UDP. As a result, only the first “match” from the new configuration file is applied.</p>
 
 <p>An issue has been created in 2016 for this bug, but remains opened to this day : <a href="https://github.com/kubernetes/kubernetes/issues/39188">https://github.com/kubernetes/kubernetes/issues/39188</a></p>
 
