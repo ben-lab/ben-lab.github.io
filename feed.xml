@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>https://ben-lab.github.io//</link>
     <atom:link href="https://ben-lab.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 28 Feb 2019 07:53:43 -0600</pubDate>
-    <lastBuildDate>Thu, 28 Feb 2019 07:53:43 -0600</lastBuildDate>
+    <pubDate>Thu, 28 Feb 2019 07:55:56 -0600</pubDate>
+    <lastBuildDate>Thu, 28 Feb 2019 07:55:56 -0600</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -138,7 +138,7 @@ It will work without issue.&lt;/p&gt;
 
 &lt;h2 id=&quot;the-solution&quot;&gt;The solution&lt;/h2&gt;
 
-&lt;p&gt;As a result, the solution is quite simple : &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl delete&lt;/code&gt; existing Deployments and Services, and recreate them rather than updating them.&lt;/p&gt;
+&lt;p&gt;The solution is quite simple : &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl delete&lt;/code&gt; existing Deployments and Services, and recreate them rather than updating them.&lt;/p&gt;
 </description>
         <pubDate>Wed, 27 Feb 2019 08:10:00 -0600</pubDate>
         <link>https://ben-lab.github.io//kubernetes-UDP-TCP-bug-same-port/</link>
