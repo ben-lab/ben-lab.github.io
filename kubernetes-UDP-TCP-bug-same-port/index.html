@@ -298,7 +298,7 @@ It will work without issue.</p>
 
 <p>Then you <strong>never</strong> will be able to add said UDP service by updating your configuration using <code class="highlighter-rouge">kubectl apply</code> and <code class="highlighter-rouge">kubectl edit</code>.</p>
 
-<h2 id="the-reason-why">The reason why</h2>
+<h2 id="the-root-cause">The root cause</h2>
 
 <p>This is due to the way Kubernetes updates existing configuration files: it uses “merge keys” to match fields from the new configuration with fields of the existing one. In our context, the merge key used is <code class="highlighter-rouge">port</code>, which happens to be the same for TCP and UDP. As a result, only the first “match” from the new configuration file is applied.</p>
 
@@ -338,6 +338,10 @@ It will work without issue.</p>
 
 <div id="disqus_thread"></div>
 <script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
 
 var disqus_config = function () {
 this.page.url = 'https://ben-lab.github.io/kubernetes-UDP-TCP-bug-same-port/';  // Replace PAGE_URL with your page's canonical URL variable

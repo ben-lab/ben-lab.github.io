@@ -5,8 +5,8 @@
     <description>Appsec and DevSecOps</description>
     <link>https://ben-lab.github.io//</link>
     <atom:link href="https://ben-lab.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 28 Feb 2019 08:03:14 -0600</pubDate>
-    <lastBuildDate>Thu, 28 Feb 2019 08:03:14 -0600</lastBuildDate>
+    <pubDate>Thu, 28 Feb 2019 08:29:17 -0600</pubDate>
+    <lastBuildDate>Thu, 28 Feb 2019 08:29:17 -0600</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -130,7 +130,7 @@ It will work without issue.&lt;/p&gt;
 
 &lt;p&gt;Then you &lt;strong&gt;never&lt;/strong&gt; will be able to add said UDP service by updating your configuration using &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl apply&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;kubectl edit&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h2 id=&quot;the-reason-why&quot;&gt;The reason why&lt;/h2&gt;
+&lt;h2 id=&quot;the-root-cause&quot;&gt;The root cause&lt;/h2&gt;
 
 &lt;p&gt;This is due to the way Kubernetes updates existing configuration files: it uses “merge keys” to match fields from the new configuration with fields of the existing one. In our context, the merge key used is &lt;code class=&quot;highlighter-rouge&quot;&gt;port&lt;/code&gt;, which happens to be the same for TCP and UDP. As a result, only the first “match” from the new configuration file is applied.&lt;/p&gt;
 
